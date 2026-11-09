@@ -1,19 +1,179 @@
-{
-  "background_color": "#ffffff",
-  "dir": "ltr",
-  "display": "standalone",
-  "name": "ПЕЧЕГОР КЛИКЕР 02",
-  "orientation": "any",
-  "scope": "/pechegor-cliker-02/",
-  "short_name": "ПЕЧЕГОР",
-  "start_url": "/pechegor-cliker-02/",
-  "theme_color": "#ffffff",
-  "description": "Космический кликер с питомцами, порталами и улучшениями.",
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Life Simulator</title>
+<style>
+body{margin:0;background:#a8dcff;font-family:Arial;text-align:center;color:#333}
+header{background:#7854bd;color:white;padding:18px;font-size:24px;font-weight:bold}
+.stats{background:white;padding:12px;display:flex;justify-content:space-around}
+.house{height:300px;max-width:450px;margin:15px auto;background:#d9ae7d;border:9px solid white;border-radius:12px;position:relative;overflow:hidden}
+.floor{position:absolute;bottom:0;width:100%;height:65%;background:#efd4ad}
+.window{position:absolute;top:25px;left:25px;background:#76d9ff;width:75px;height:75px;border:7px solid white}
+.door{position:absolute;bottom:0;right:20px;width:60px;height:110px;background:#87502e}
+.person{position:absolute;bottom:15px;left:42%;font-size:75px}
+.furniture{position:absolute;bottom:10px;font-size:45px}
+.bed{left:15px}.sofa{left:110px}
+.panel{background:white;border-radius:16px;margin:12px auto;padding:15px;max-width:430px}
+button{background:#ffc34e;border:0;border-radius:12px;padding:12px;margin:5px;font-weight:bold;font-size:15px}
+.bar{background:#ddd;height:12px;border-radius:20px;margin:5px}
+.fill{background:#50c878;height:100%;border-radius:20px}
+</style>
+</head>
+<body>
+
+<header>🏡 MY LIFE SIMULATOR</header>
+
+<div class="stats">
+ <b>💰 <span id="money">500</span></b>
+ <b>👤 <span id="name">Алекс</span></b>
+</div>
+
+<div class="house">
+ <div class="window"></div>
+ <div class="floor"></div>
+ <div class="furniture bed">🛏️</div>
+ <div class="furniture sofa">🛋️</div>
+ <div class="door"></div>
+ <div class="person" id="person">🧑</div>
+</div>
+
+<div class="panel">
+<h3>👤 Персонаж</h3>
+<input id="newName" placeholder="Имя">
+<select id="avatar">
+<option>🧑</option>
+<option>👩</option>
+<option>👨</option>
+<option>🧙</option>
+</select>
+<button onclick="createPerson()">Создать</button>
+</div>
+
+<div class="panel">
+<h3>❤️ Потребности</h3>
+<div>🍔 Голод: <span id="hungerText">100</span>%</div>
+<div class="bar"><div id="hunger" class="fill"></div></div>
+<div>😴 Сон: <span id="sleepText">100</span>%</div>
+<div class="bar"><div id="sleep" class="fill"></div></div>
+<div>🚿 Гигиена: <span id="cleanText">100</span>%</div>
+<div class="bar"><div id="clean" class="fill"></div></div>
+<div>😊 Счастье: <span id="happyText">100</span>%</div>
+<div class="bar"><div id="happy" class="fill"></div></div>
+</div>
+
+<div class="panel">
+<h3>🎮 Действия</h3>
+<button onclick="action('eat')">🍕 Поесть</button>
+<button onclick="action('sleep')">😴 Спать</button>
+<button onclick="action('shower')">🚿 Душ</button>
+<button onclick="action('fun')">🎮 Играть</button>
+<button onclick="action('work')">💼 Работа</button>
+<p id="message">Добро пожаловать!</p>
+</div>
+
+<div class="panel">
+<h3>🛒 Магазин</h3>
+<button onclick="buy('🌵',50)">🌵 50 монет</button>
+<button onclick="buy('📺',150)">📺 150 монет</button>
+<button onclick="buy('🎹',200)">🎹 200 монет</button>
+<p id="items">Покупок пока нет</p>
+</div>
+
+<script>
+let data={
+ money:500,name:"Алекс",avatar:"🧑",
+ hunger:100,sleep:100,clean:100,happy:100,
+ items:[]
+};
+
+function save(){
+ localStorage.setItem("lifeSave",JSON.stringify(data));
 }
+
+function load(){
+ try{
+  let saved=JSON.parse(localStorage.getItem("lifeSave"));
+  if(saved)data={...data,...saved};
+ }catch(e){}
+}
+
+function limit(n){return Math.max(0,Math.min(100,n))}
+
+function render(){
+ document.getElementById("money").textContent=data.money;
+ document.getElementById("name").textContent=data.name;
+ document.getElementById("person").textContent=data.avatar;
+ ["hunger","sleep","clean","happy"].forEach(k=>{
+  document.getElementById(k).style.width=data[k]+"%";
+  document.getElementById(k+"Text").textContent=Math.round(data[k]);
+ });
+ document.getElementById("items").textContent=
+ data.items.length?data.items.join(" "):"Покупок пока нет";
+ save();
+}
+
+function createPerson(){
+ let n=document.getElementById("newName").value.trim();
+ if(n)data.name=n;
+ data.avatar=document.getElementById("avatar").value;
+ message("Персонаж создан!");
+ render();
+}
+
+function message(t){
+ document.getElementById("message").textContent=t;
+}
+
+function action(a){
+ if(a==="eat"){
+  if(data.money<20)return message("Нужно 20 монет!");
+  data.money-=20;
+  data.hunger=limit(data.hunger+35);
+  message("Вкусная еда! 🍕");
+ }
+ if(a==="sleep"){
+  data.sleep=limit(data.sleep+40);
+  message("Хороший отдых! 😴");
+ }
+ if(a==="shower"){
+  data.clean=limit(data.clean+45);
+  message("Ты принял душ! 🚿");
+ }
+ if(a==="fun"){
+  data.happy=limit(data.happy+35);
+  message("Весело! 🎮");
+ }
+ if(a==="work"){
+  data.money+=100;
+  data.sleep=limit(data.sleep-15);
+  data.happy=limit(data.happy-10);
+  message("Заработано 100 монет!");
+ }
+ render();
+}
+
+function buy(item,cost){
+ if(data.money<cost)return message("Не хватает денег!");
+ data.money-=cost;
+ data.items.push(item);
+ message("Куплено: "+item);
+ render();
+}
+
+setInterval(()=>{
+ data.hunger=limit(data.hunger-1);
+ data.sleep=limit(data.sleep-0.5);
+ data.clean=limit(data.clean-0.3);
+ if(data.hunger<30||data.sleep<30||data.clean<30)
+  data.happy=limit(data.happy-2);
+ render();
+},5000);
+
+load();
+render();
+</script>
+</body>
+</html>
