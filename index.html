@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
+<link rel="manifest" href="manifest.json">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>ПЕЧЕГОР КЛИКЕР 02</title>
 <style>
@@ -45,7 +46,7 @@ function update(){
  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));render();
 }
 function gain(){if(s.energy<1)return;s.energy--;let n=s.tapPower*mult();s.coins+=n;s.level=Math.max(s.level,1+Math.floor(s.coins/100));update();save();let f=document.createElement('span');f.className='float';f.textContent=`+${fmt(n)} 🍞`;f.style.left=(35+Math.random()*30)+'%';f.style.top='43%';document.querySelector('.hero').append(f);setTimeout(()=>f.remove(),850)}
-document.getElementById('tap').addEventListener('pointerdown',e=>{e.preventDefault();gain()});
+document.getElementById('tap').addEventListener('click',e=>{e.preventDefault();gain()});
 document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();gain()}});
 setInterval(()=>{let changed=false;if(s.energy<s.maxEnergy){s.energy=Math.min(s.maxEnergy,s.energy+1);changed=true}if(s.auto>0){s.coins+=s.auto*mult();s.level=Math.max(s.level,1+Math.floor(s.coins/100));changed=true}if(changed){update();save()}},1000);
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;update()}));
