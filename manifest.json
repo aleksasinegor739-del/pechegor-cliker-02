@@ -1,20 +1,20 @@
+
 {
   "background_color": "#ffffff",
   "dir": "ltr",
   "display": "standalone",
   "name": "ПЕЧЕГОР КЛИКЕР 02",
   "orientation": "any",
-  "scope": "/",
-  "short_name": "aleksasinegor739-del.github",
+  "scope": "/pechegor-cliker-02/",
+  "short_name": "ПЕЧЕГОР",
   "start_url": "/pechegor-cliker-02/",
   "theme_color": "#ffffff",
-  "description": "Космический кликер с питомцами, порталами и улучшениями."
+  "description": "Космический кликер с питомцами, порталами и улучшениями.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
 }
-,
-"icons": [
-  {
-    "src": "icon-192.png",
-    "sizes": "192x192",
-    "type": "image/png"
-  }
-]
