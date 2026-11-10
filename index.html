@@ -7,7 +7,7 @@
 <title>ПЕЧЕГОР КЛИКЕР 02</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;color:#f5f7ff;font-family:system-ui,Arial;min-height:100vh;position:relative;isolation:isolate;overflow-x:hidden;background:linear-gradient(180deg,#08091f,#101638 48%,#080b20)}
+body{margin:0;color:#f5f7ff;font-family:system-ui,Arial;min-height:100vh;position:relative;isolation:isolate;overflow-x:hidden;background:linear-gradient(180deg,#08091f,#101638 48%,#080b20);transition:background 1s}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:radial-gradient(2px 2px at 20px 30px,#fff 99%,transparent),radial-gradient(1px 1px at 80px 90px,#9ceeff 99%,transparent),radial-gradient(2px 2px at 150px 40px,#fff 99%,transparent),radial-gradient(1px 1px at 200px 130px,#c5a5ff 99%,transparent);background-size:320px 260px;opacity:.65;animation:stars 55s linear infinite}
 body:after{content:"";position:fixed;inset:-30%;pointer-events:none;z-index:-2;background:radial-gradient(ellipse at 15% 25%,#713cff55,transparent 32%),radial-gradient(ellipse at 80% 20%,#087bff55,transparent 30%),radial-gradient(ellipse at 55% 70%,#d02bff33,transparent 35%);filter:blur(35px);animation:nebula 18s ease-in-out infinite alternate}
 @keyframes stars{to{background-position:320px 520px}}
@@ -44,6 +44,7 @@ header p{color:#b9c7e8;margin:5px}
 .tab{border:1px solid #3b4d7b;background:#0b1531;color:white;padding:8px 10px;border-radius:11px;cursor:pointer;font-weight:700}
 .tab.active{background:#24547a;border-color:#71ddff}
 h2{font-size:19px;margin:4px 0 10px}
+h3{font-size:16px}
 .item{display:flex;align-items:center;gap:9px;padding:10px;margin:8px 0;background:#0b1531;border:1px solid #2c3c68;border-radius:12px}
 .emoji{font-size:27px}
 .desc{flex:1;min-width:0}
@@ -75,13 +76,36 @@ h2{font-size:19px;margin:4px 0 10px}
 .inventory-info{flex:1}
 .inventory-info small{display:block;color:#b9c7e8}
 .inventory-card button{margin-top:8px}
+.world-card{border:1px solid #42557e;background:#0b1531;border-radius:14px;padding:12px;margin:10px 0}
+.world-card.current{border:2px solid #70e3ff;box-shadow:0 0 16px #46cfff33}
+.world-card.locked{opacity:.8}
+.world-head{display:flex;gap:12px;align-items:center}
+.world-icon{font-size:38px}
+.world-head div:nth-child(2){flex:1}
+.world-head small{color:#b9c7e8}
+.progress{height:10px;border-radius:10px;background:#253452;overflow:hidden;margin:8px 0}
+.progress span{display:block;height:100%;background:linear-gradient(90deg,#5ee7ff,#a879ff);width:0}
+.boss{padding:15px;text-align:center;border:1px solid #a35b83;background:linear-gradient(135deg,#351c45,#17294a);border-radius:15px;margin:12px 0}
+.boss-icon{font-size:60px}
+.boss-health{height:13px;border-radius:10px;background:#351b2b;overflow:hidden;margin:10px 0}
+.boss-health span{height:100%;display:block;background:linear-gradient(90deg,#ff477e,#ffb24a);transition:width .2s}
+body[data-world="forest"]{background:linear-gradient(180deg,#092b20,#174a35 55%,#081b20)}
+body[data-world="desert"]{background:linear-gradient(180deg,#4a2815,#a65b28 55%,#27152a)}
+body[data-world="ice"]{background:linear-gradient(180deg,#092b50,#246b91 55%,#101b3c)}
+body[data-world="space"]{background:linear-gradient(180deg,#08091f,#25164f 55%,#080b20)}
+body[data-world="lava"]{background:linear-gradient(180deg,#40100c,#9b3217 55%,#1d0a17)}
+body[data-world="ocean"]{background:linear-gradient(180deg,#032c46,#075b79 55%,#061a39)}
+body[data-world="cloud"]{background:linear-gradient(180deg,#38638d,#8b9dd4 55%,#2b285c)}
+body[data-world="candy"]{background:linear-gradient(180deg,#54204f,#b44d9b 55%,#3a1748)}
+body[data-world="ghost"]{background:linear-gradient(180deg,#14102c,#38235c 55%,#100d20)}
+body[data-world="secret"]{background:linear-gradient(180deg,#071c25,#164d56 55%,#08091f)}
 @media(max-width:720px){.layout{grid-template-columns:1fr}.hero{min-height:350px}.panel{padding:12px}.stats{gap:6px}.stat{padding:8px 3px}}
 </style>
 </head>
-<body>
+<body data-world="forest">
 <header>
 <h1>🍞 ПЕЧЕГОР КЛИКЕР 02</h1>
-<p>Космическая слизь собирает печеогароки!</p>
+<p>Исследуй миры, побеждай боссов и собирай печеогароки!</p>
 </header>
 <main class="wrap">
 <div class="stats">
@@ -92,13 +116,12 @@ h2{font-size:19px;margin:4px 0 10px}
 <div class="layout">
 <section class="panel hero">
 <div class="rank" id="rank">КОСМИЧЕСКИЙ НОВИЧОК</div>
+<div id="worldLabel" class="notice">🌲 Лес</div>
 <div class="orbit" id="orbit"></div>
 <button class="tap" id="tap" aria-label="Нажать на слизь">
 <div class="crown">👑</div>
 <div class="slime skin-blue" id="slime">
-<div class="shine"></div>
-<div class="eyes"><i class="eye"></i><i class="eye"></i></div>
-<div class="mouth"></div>
+<div class="shine"></div><div class="eyes"><i class="eye"></i><i class="eye"></i></div><div class="mouth"></div>
 </div>
 </button>
 <p class="hint">Нажимай на слизь! <b id="perTap">+1 🍞</b></p>
@@ -108,6 +131,7 @@ h2{font-size:19px;margin:4px 0 10px}
 <section class="panel">
 <nav class="tabs">
 <button class="tab active" data-tab="shop">🛒 Магазин</button>
+<button class="tab" data-tab="worlds">🌍 Миры</button>
 <button class="tab" data-tab="portals">🌀 Порталы</button>
 <button class="tab" data-tab="pets">🐾 Питомцы</button>
 <button class="tab" data-tab="skins">🎨 Скины</button>
@@ -118,13 +142,13 @@ h2{font-size:19px;margin:4px 0 10px}
 </section>
 </div>
 </main>
-
 <script>
 const $=id=>document.getElementById(id);
 const defaults={
 coins:0,energy:100,maxEnergy:100,level:1,tapPower:1,auto:0,
 owned:[],skin:0,upgrades:0,batteryUpgrades:0,equipped:[],
-petLevels:{},itemsOwned:[],itemsEquipped:[]
+petLevels:{},itemsOwned:[],itemsEquipped:[],
+unlockedWorlds:[0],currentWorld:0,bossHP:{},bossesDefeated:[]
 };
 let saved={};
 try{saved=JSON.parse(localStorage.getItem('pechegor-save')||'{}')||{}}catch(e){}
@@ -134,6 +158,12 @@ s.equipped=Array.isArray(s.equipped)?s.equipped.filter(id=>s.owned.includes(id))
 s.petLevels=s.petLevels&&typeof s.petLevels==='object'?s.petLevels:{};
 s.itemsOwned=Array.isArray(s.itemsOwned)?s.itemsOwned:[];
 s.itemsEquipped=Array.isArray(s.itemsEquipped)?s.itemsEquipped.filter(id=>s.itemsOwned.includes(id)).slice(0,8):[];
+s.unlockedWorlds=Array.isArray(s.unlockedWorlds)?s.unlockedWorlds:[0];
+s.unlockedWorlds.push(0);
+s.unlockedWorlds=[...new Set(s.unlockedWorlds.filter(n=>Number.isInteger(n)&&n>=0&&n<10))];
+s.bossHP=s.bossHP&&typeof s.bossHP==='object'?s.bossHP:{};
+s.bossesDefeated=Array.isArray(s.bossesDefeated)?s.bossesDefeated:[];
+s.currentWorld=Number.isInteger(s.currentWorld)&&s.unlockedWorlds.includes(s.currentWorld)?s.currentWorld:0;
 if(!Number.isFinite(s.coins)||s.coins<0)s.coins=0;
 if(!Number.isFinite(s.energy)||s.energy<0)s.energy=100;
 if(!Number.isFinite(s.maxEnergy)||s.maxEnergy<1)s.maxEnergy=100;
@@ -143,8 +173,20 @@ if(!Number.isFinite(s.auto)||s.auto<0)s.auto=0;
 if(!Number.isFinite(s.upgrades)||s.upgrades<0)s.upgrades=0;
 if(!Number.isInteger(s.skin)||s.skin<0||s.skin>8)s.skin=0;
 if(!Number.isInteger(s.batteryUpgrades)||s.batteryUpgrades<0)s.batteryUpgrades=0;
-
 let tab='shop';
+
+const worlds=[
+{id:'forest',name:'Лес',icon:'🌲',desc:'Зелёные поляны, древние деревья и лесные сокровища.',cost:0,boss:'Древний древесник',bossIcon:'🌳',hp:100,reward:500,pet:'🦊'},
+{id:'desert',name:'Пустыня',icon:'🏜️',desc:'Песчаные бури, пирамиды и золотые тайны.',cost:1000,boss:'Песчаный голем',bossIcon:'🗿',hp:500,reward:2500,pet:'🐪'},
+{id:'ice',name:'Ледяной мир',icon:'❄️',desc:'Ледяные пещеры и замороженные сокровища.',cost:5000,boss:'Ледяной дракон',bossIcon:'🐲',hp:2000,reward:10000,pet:'🐧'},
+{id:'space',name:'Космос',icon:'🚀',desc:'Звёзды, далёкие планеты и космические тайны.',cost:15000,boss:'Звёздный титан',bossIcon:'👾',hp:8000,reward:30000,pet:'🪐'},
+{id:'lava',name:'Лавовый мир',icon:'🌋',desc:'Вулканы, огненные пещеры и горячие сокровища.',cost:40000,boss:'Повелитель лавы',bossIcon:'🔥',hp:30000,reward:80000,pet:'🐉'},
+{id:'ocean',name:'Подводный мир',icon:'🌊',desc:'Коралловые города и затонувшие сокровища.',cost:100000,boss:'Морской левиафан',bossIcon:'🐙',hp:100000,reward:200000,pet:'🦈'},
+{id:'cloud',name:'Облачный мир',icon:'☁️',desc:'Парящие острова и небесные замки.',cost:250000,boss:'Небесный страж',bossIcon:'🦅',hp:350000,reward:500000,pet:'🪽'},
+{id:'candy',name:'Мир конфет',icon:'🍬',desc:'Шоколадные горы, карамельные реки и сладости.',cost:600000,boss:'Король конфет',bossIcon:'🍭',hp:1000000,reward:1200000,pet:'🍡'},
+{id:'ghost',name:'Мир призраков',icon:'👻',desc:'Призрачные замки и загадочные существа.',cost:1500000,boss:'Король призраков',bossIcon:'👻',hp:3500000,reward:3000000,pet:'💀'},
+{id:'secret',name:'Секретное измерение',icon:'🌀',desc:'Скрытая реальность. Здесь живут самые редкие тайны.',cost:5000000,boss:'Повелитель измерений',bossIcon:'🌀',hp:10000000,reward:10000000,pet:'🔮'}
+];
 
 const pets=[
 {id:'star',name:'Звёздный малыш',emoji:'⭐',rarity:'Обычный',mult:1},
@@ -166,7 +208,6 @@ const pets=[
 {id:'nebula',name:'Туманная слизь',emoji:'🌌',rarity:'Секретный',mult:25},
 {id:'blackhole',name:'Повелитель чёрной дыры',emoji:'🕳️',rarity:'Мифический',mult:35}
 ];
-
 const skins=[
 {name:'Голубая слизь',emoji:'🩵',className:'blue'},
 {name:'Розовая слизь',emoji:'🩷',className:'pink'},
@@ -178,8 +219,6 @@ const skins=[
 {name:'Шахматы',emoji:'♟️',className:'chess'},
 {name:'Конус',emoji:'🚧',className:'cone'}
 ];
-
-/* НОВЫЕ ПРЕДМЕТЫ */
 const items=[
 {id:'epic_crystal',name:'Кристалл силы',icon:'💎',category:'Эпический предмет',rarity:'Эпический',css:'epic',desc:'+20% к силе клика',tap:.20,auto:0},
 {id:'epic_star',name:'Звезда удачи',icon:'🌟',category:'Эпический предмет',rarity:'Эпический',css:'epic',desc:'+10% к силе клика и +2 в секунду',tap:.10,auto:2},
@@ -202,19 +241,13 @@ const items=[
 const fmt=n=>Math.floor(n).toLocaleString('ru-RU');
 function save(){try{localStorage.setItem('pechegor-save',JSON.stringify(s))}catch(e){}}
 function petLevel(id){return Math.max(1,Math.min(5,Number(s.petLevels[id])||1))}
-function petMultiplier(){
-return s.equipped.reduce((a,id)=>{
-const p=pets.find(x=>x.id===id);
-return a+(p?.mult||0)*.15*petLevel(id);
-},0);
-}
-function equippedItems(){
-return s.itemsEquipped.map(id=>items.find(x=>x.id===id)).filter(Boolean);
-}
+function petMultiplier(){return s.equipped.reduce((a,id)=>{const p=pets.find(x=>x.id===id);return a+(p?.mult||0)*.15*petLevel(id)},0)}
+function equippedItems(){return s.itemsEquipped.map(id=>items.find(x=>x.id===id)).filter(Boolean)}
 function itemTapBonus(){return equippedItems().reduce((a,x)=>a+x.tap,0)}
 function itemAutoBonus(){return equippedItems().reduce((a,x)=>a+x.auto,0)}
 function multiplier(){return 1+petMultiplier()+itemTapBonus()}
 function autoIncome(){return s.auto+itemAutoBonus()}
+function currentWorld(){return worlds[s.currentWorld]}
 
 function update(){
 $('coins').textContent=fmt(s.coins);
@@ -225,69 +258,92 @@ $('rank').textContent=s.level<5?'КОСМИЧЕСКИЙ НОВИЧОК':s.level<
 $('slime').className='slime skin-'+(skins[s.skin]?.className||'blue');
 $('orbit').innerHTML=s.equipped.slice(0,5).map(id=>`<span class="petfloat">${pets.find(p=>p.id===id)?.emoji||'⭐'}</span>`).join('');
 $('bonusText').textContent=`Бонус предметов: +${Math.round(itemTapBonus()*100)}% к клику · +${fmt(itemAutoBonus())}/сек`;
+$('worldLabel').textContent=currentWorld().icon+' '+currentWorld().name;
+document.body.dataset.world=currentWorld().id;
 document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-render();
-save();
+render();save();
 }
-
 function gain(){
 if(s.energy<1)return;
 s.energy--;
 let n=s.tapPower*multiplier();
-s.coins+=n;
-s.level=Math.max(s.level,1+Math.floor(s.coins/100));
+s.coins+=n;s.level=Math.max(s.level,1+Math.floor(s.coins/100));
 update();
-let f=document.createElement('span');
-f.className='float';f.textContent=`+${fmt(n)} 🍞`;
-f.style.left=(35+Math.random()*30)+'%';
-f.style.top='43%';
-document.querySelector('.hero').append(f);
-setTimeout(()=>f.remove(),850);
+let f=document.createElement('span');f.className='float';f.textContent=`+${fmt(n)} 🍞`;
+f.style.left=(35+Math.random()*30)+'%';f.style.top='43%';
+document.querySelector('.hero').append(f);setTimeout(()=>f.remove(),850);
 }
-
-const tapButton=$('tap');
-let lastTouchTime=0;
-tapButton.addEventListener('touchstart',e=>{
-e.preventDefault();lastTouchTime=Date.now();
-for(const touch of e.changedTouches)gain();
-},{passive:false});
-tapButton.addEventListener('click',e=>{
-e.preventDefault();if(Date.now()-lastTouchTime>700)gain();
-});
-document.addEventListener('keydown',e=>{
-if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
-e.preventDefault();gain();
-}
-});
-
+const tapButton=$('tap');let lastTouchTime=0;
+tapButton.addEventListener('touchstart',e=>{e.preventDefault();lastTouchTime=Date.now();for(const touch of e.changedTouches)gain()},{passive:false});
+tapButton.addEventListener('click',e=>{e.preventDefault();if(Date.now()-lastTouchTime>700)gain()});
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();gain()}});
 setInterval(()=>{
 let changed=false;
 if(s.energy<s.maxEnergy){s.energy=Math.min(s.maxEnergy,s.energy+1);changed=true}
-if(autoIncome()>0){
-s.coins+=autoIncome();
-s.level=Math.max(s.level,1+Math.floor(s.coins/100));
-changed=true;
-}
+if(autoIncome()>0){s.coins+=autoIncome();s.level=Math.max(s.level,1+Math.floor(s.coins/100));changed=true}
 if(changed)update();
 },1000);
-
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
-tab=b.dataset.tab;update();
-}));
-
-function buy(cost,fn){
-if(s.coins<cost){alert('Не хватает печеогароков!');return}
-s.coins-=cost;fn();update();
-}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;update()}));
+function buy(cost,fn){if(s.coins<cost){alert('Не хватает печеогароков!');return} s.coins-=cost;fn();update()}
 
 function render(){
 let c=$('content');
-if(tab==='shop'){
+if(tab==='worlds'){
+const w=currentWorld(),hp=s.bossHP[s.currentWorld]??w.hp;
+const defeated=s.bossesDefeated.includes(s.currentWorld);
+c.innerHTML=`<h2>🌍 Карта миров</h2>
+<p class="muted">Исследуй миры по порядку. Чтобы открыть следующий мир, победи босса текущего мира и заплати стоимость открытия.</p>
+<div class="portal"><h3>Сейчас ты в мире: ${w.icon} ${w.name}</h3><p>${w.desc}</p><p>Местный питомец: ${w.pet}</p></div>
+${worlds.map((x,i)=>{
+let unlocked=s.unlockedWorlds.includes(i),active=s.currentWorld===i,done=s.bossesDefeated.includes(i);
+return `<div class="world-card ${active?'current':''} ${unlocked?'':'locked'}">
+<div class="world-head"><div class="world-icon">${x.icon}</div><div><b>${x.name}</b><br><small>${x.desc}</small></div></div>
+<p class="muted">${unlocked?(done?'🏆 Босс побеждён':'🔓 Мир открыт'):'🔒 Цена открытия: '+fmt(x.cost)+' 🍞'}</p>
+${unlocked?`<button class="action" data-enter="${i}">${active?'Ты здесь':'Перейти в мир'}</button>`:
+`<button class="action" data-unlock="${i}" ${(!s.bossesDefeated.includes(i-1)||s.coins<x.cost)?'disabled':''}>Открыть · ${fmt(x.cost)} 🍞</button>
+${i>0&&!s.bossesDefeated.includes(i-1)?'<p class="muted">Сначала победи босса предыдущего мира.</p>':''}`}
+${done?'<span class="rarity legendary">Босс побеждён</span>':''}
+</div>`;
+}).join('')}
+<div class="boss">
+<h3>👹 Босс мира: ${w.boss}</h3>
+<div class="boss-icon">${w.bossIcon}</div>
+<p>${defeated?'Ты уже победил этого босса!':'Победи босса, чтобы открыть путь в следующий мир.'}</p>
+<div class="boss-health"><span style="width:${Math.max(0,hp/w.hp*100)}%"></span></div>
+<p>Здоровье: <b>${fmt(hp)} / ${fmt(w.hp)}</b></p>
+<p class="muted">Урон за атаку: ${fmt(Math.max(1,s.tapPower*multiplier()*10))}</p>
+<button class="action" id="attackBoss" ${defeated?'disabled':''}>⚔️ Атаковать босса</button>
+${defeated?'<p class="notice">Награда за победу уже получена.</p>':''}
+</div>`;
+c.querySelectorAll('[data-enter]').forEach(b=>b.onclick=()=>{s.currentWorld=Number(b.dataset.enter);update()});
+c.querySelectorAll('[data-unlock]').forEach(b=>b.onclick=()=>{
+let i=Number(b.dataset.unlock),world=worlds[i];
+if(!s.bossesDefeated.includes(i-1)){alert('Сначала победи босса предыдущего мира!');return}
+if(s.coins<world.cost){alert('Не хватает печеогароков!');return}
+s.coins-=world.cost;s.unlockedWorlds.push(i);s.currentWorld=i;update();
+});
+const attack=$('attackBoss');
+if(attack)attack.onclick=()=>{
+if(s.bossesDefeated.includes(s.currentWorld))return;
+let damage=Math.max(1,s.tapPower*multiplier()*10);
+s.bossHP[s.currentWorld]=Math.max(0,hp-damage);
+if(s.bossHP[s.currentWorld]<=0){
+s.bossesDefeated.push(s.currentWorld);
+s.coins+=w.reward;
+s.level=Math.max(s.level,1+Math.floor(s.coins/100));
+alert(`🏆 ПОБЕДА!\nТы победил: ${w.boss}!\nНаграда: ${fmt(w.reward)} 🍞`);
+}else{
+$('content').querySelector('.boss-health span').style.width=(s.bossHP[s.currentWorld]/w.hp*100)+'%';
+$('content').querySelector('.boss').querySelector('p:nth-of-type(3)').innerHTML=`Здоровье: <b>${fmt(s.bossHP[s.currentWorld])} / ${fmt(w.hp)}</b>`;
+}
+update();
+};
+}
+else if(tab==='shop'){
 let tc=Math.floor(20*Math.pow(1.65,s.upgrades));
 let ac=Math.floor(100*Math.pow(1.8,s.auto));
 let batteryCost=Math.floor(150*Math.pow(1.6,s.batteryUpgrades));
-c.innerHTML=`
-<h2>Улучшения</h2>
+c.innerHTML=`<h2>Улучшения</h2>
 <div class="item"><span class="emoji">👆</span><div class="desc"><b>Сильный тап</b><small>+1 печеогарок за нажатие</small></div><button class="action" id="bt">🍞 ${fmt(tc)}</button></div>
 <div class="item"><span class="emoji">🤖</span><div class="desc"><b>Автосборщик</b><small>+1 печеогарок в секунду</small></div><button class="action" id="ba">🍞 ${fmt(ac)}</button></div>
 <div class="item"><span class="emoji">⚡</span><div class="desc"><b>Батарея</b><small>+25 к максимуму энергии · Улучшений: ${s.batteryUpgrades}</small></div><button class="action" id="be">🍞 ${fmt(batteryCost)}</button></div>
@@ -295,14 +351,10 @@ c.innerHTML=`
 $('bt').onclick=()=>buy(tc,()=>{s.tapPower++;s.upgrades++});
 $('ba').onclick=()=>buy(ac,()=>s.auto++);
 $('be').onclick=()=>buy(batteryCost,()=>{s.maxEnergy+=25;s.energy=s.maxEnergy;s.batteryUpgrades++});
-$('refill').onclick=()=>{
-if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}
-buy(5000,()=>{s.energy=s.maxEnergy});
-};
+$('refill').onclick=()=>{if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}buy(5000,()=>s.energy=s.maxEnergy)};
 }
 else if(tab==='portals'){
-c.innerHTML=`
-<h2>Космические порталы</h2>
+c.innerHTML=`<h2>Космические порталы</h2>
 <div class="portal"><h3>🟢 Зелёный портал</h3><p>Обычные и редкие питомцы</p><button class="action" id="p1">Открыть · 100 🍞</button></div>
 <div class="portal"><h3>🟣 Фиолетовый портал</h3><p>Редкие и эпические питомцы</p><button class="action" id="p2">Открыть · 500 🍞</button></div>
 <div class="portal"><h3>🟡 Золотой портал</h3><p>Эпические, легендарные и секретные питомцы</p><button class="action" id="p3">Открыть · 2 000 🍞</button></div>
@@ -318,61 +370,36 @@ c.innerHTML=`<h2>Мои питомцы</h2><p class="notice">Выбери до 5
 let p=pets.find(x=>x.id===id),lv=petLevel(id),cost=lv*500,active=s.equipped.includes(id);
 return `<div class="petcard"><div class="big">${p.emoji}</div><b>${p.name}</b><small>${p.rarity} · бонус x${p.mult} · уровень ${lv}/5</small><button class="action" data-equip="${id}" style="margin:7px 2px 3px">${active?'Снять':'Выбрать'}</button><button class="action" data-upgrade="${id}" style="margin:3px 2px">${lv>=5?'Максимум':'Улучшить · '+fmt(cost)+' 🍞'}</button></div>`;
 }).join(''):'<p class="muted">Пока питомцев нет. Загляни в порталы! 🌀</p>')+'</div>';
-c.querySelectorAll('[data-equip]').forEach(b=>{b.onclick=()=>{
+c.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>{
 let id=b.dataset.equip;
 if(s.equipped.includes(id))s.equipped=s.equipped.filter(x=>x!==id);
 else if(s.equipped.length<5)s.equipped.push(id);
 else{alert('Можно выбрать не больше 5 питомцев!');return}
 update();
-}});
-c.querySelectorAll('[data-upgrade]').forEach(b=>{b.onclick=()=>{
+});
+c.querySelectorAll('[data-upgrade]').forEach(b=>b.onclick=()=>{
 let id=b.dataset.upgrade,lv=petLevel(id),cost=lv*500;
 if(lv>=5){alert('Максимальный уровень!');return}
 if(s.coins<cost){alert('Не хватает печеогароков!');return}
 s.coins-=cost;s.petLevels[id]=lv+1;update();
-}});
+});
 }
 else if(tab==='inventory'){
 const owned=items.filter(x=>s.itemsOwned.includes(x.id));
 const equipped=items.filter(x=>s.itemsEquipped.includes(x.id));
-c.innerHTML=`
-<h2>🎒 Инвентарь предметов</h2>
-<div class="portal">
-<h3>📦 Таинственный сундук</h3>
-<p>Внутри могут быть эпические, легендарные, мифические и секретные предметы, реликвии, артефакты, амулеты и кольца.</p>
-<button class="action" id="chest">Открыть сундук · 1 500 🍞</button>
-</div>
-<p>Надето: <b>${equipped.length}/8</b></p>
-<p class="muted">Каждый надетый предмет усиливает клики или автосборщик.</p>
-<h3>✨ Мои предметы (${owned.length}/${items.length})</h3>
+c.innerHTML=`<h2>🎒 Инвентарь предметов</h2>
+<div class="portal"><h3>📦 Таинственный сундук</h3><p>Внутри могут быть эпические, легендарные, мифические и секретные предметы, реликвии, артефакты, амулеты и кольца.</p><button class="action" id="chest">Открыть сундук · 1 500 🍞</button></div>
+<p>Надето: <b>${equipped.length}/8</b></p><h3>✨ Мои предметы (${owned.length}/${items.length})</h3>
 ${owned.length?owned.map(item=>{
 const active=s.itemsEquipped.includes(item.id);
-return `<div class="inventory-card ${active?'equipped':''}">
-<div class="inventory-top">
-<div class="inventory-icon">${item.icon}</div>
-<div class="inventory-info">
-<b>${item.name}</b>
-<div><span class="rarity ${item.css}">${item.rarity}</span></div>
-<small>${item.category}</small>
-<small>${item.desc}</small>
-</div>
-</div>
-<button class="action" data-item="${item.id}">${active?'Снять предмет':'Надеть предмет'}</button>
-</div>`;
-}).join(''):'<p class="muted">Инвентарь пуст. Открой свой первый сундук! 📦</p>'}
-`;
+return `<div class="inventory-card ${active?'equipped':''}"><div class="inventory-top"><div class="inventory-icon">${item.icon}</div><div class="inventory-info"><b>${item.name}</b><div><span class="rarity ${item.css}">${item.rarity}</span></div><small>${item.category}</small><small>${item.desc}</small></div></div><button class="action" data-item="${item.id}">${active?'Снять предмет':'Надеть предмет'}</button></div>`;
+}).join(''):'<p class="muted">Инвентарь пуст. Открой свой первый сундук! 📦</p>'}`;
 $('chest').onclick=openChest;
-c.querySelectorAll('[data-item]').forEach(b=>{
-b.onclick=()=>{
+c.querySelectorAll('[data-item]').forEach(b=>b.onclick=()=>{
 const id=b.dataset.item;
-if(s.itemsEquipped.includes(id)){
-s.itemsEquipped=s.itemsEquipped.filter(x=>x!==id);
-}else{
-if(s.itemsEquipped.length>=8){alert('Можно надеть максимум 8 предметов!');return}
-s.itemsEquipped.push(id);
-}
+if(s.itemsEquipped.includes(id))s.itemsEquipped=s.itemsEquipped.filter(x=>x!==id);
+else{if(s.itemsEquipped.length>=8){alert('Можно надеть максимум 8 предметов!');return}s.itemsEquipped.push(id)}
 update();
-};
 });
 }
 else if(tab==='luck'){
@@ -380,80 +407,40 @@ c.innerHTML=`<h2>🎡 Зал удачи</h2><div class="portal"><h3>Колесо
 $('spin').onclick=()=>{
 if(s.coins<2500){$('luckResult').textContent='Не хватает печеогароков!';return}
 s.coins-=2500;
-const prizes=[
-{label:'10 000 🍞',coins:10000,weight:.5},
-{label:'5 000 🍞',coins:5000,weight:5},
-{label:'2 500 🍞',coins:2500,weight:10},
-{label:'1 000 🍞',coins:1000,weight:15},
-{label:'500 🍞',coins:500,weight:50},
-{label:'100 🍞',coins:100,weight:75}
-];
+const prizes=[{label:'10 000 🍞',coins:10000,weight:.5},{label:'5 000 🍞',coins:5000,weight:5},{label:'2 500 🍞',coins:2500,weight:10},{label:'1 000 🍞',coins:1000,weight:15},{label:'500 🍞',coins:500,weight:50},{label:'100 🍞',coins:100,weight:75}];
 const total=prizes.reduce((sum,p)=>sum+p.weight,0);
 let roll=Math.random()*total,prize=prizes[prizes.length-1];
 for(const item of prizes){roll-=item.weight;if(roll<0){prize=item;break}}
-s.coins+=prize.coins;
-s.level=Math.max(s.level,1+Math.floor(s.coins/100));
-update();
-const result=$('luckResult');
-if(result)result.textContent='🎉 Выпало: '+prize.label+'!';
+s.coins+=prize.coins;s.level=Math.max(s.level,1+Math.floor(s.coins/100));
+update();const result=$('luckResult');if(result)result.textContent='🎉 Выпало: '+prize.label+'!';
 };
 }
 else if(tab==='skins'){
-c.innerHTML=`<h2>🎨 Космические скины</h2><p class="notice">Выбери новый облик слизи! Каждый скин стоит 1000 🍞.</p>`+
+c.innerHTML=`<h2>🎨 Космические скины</h2><p class="notice">Каждый новый скин стоит 1000 🍞.</p>`+
 skins.map((sk,i)=>`<div class="item"><span class="emoji">${sk.emoji}</span><div class="desc"><b>${sk.name}</b><small>${i===0?'Стандартный':'Новый облик слизи'}</small></div><button class="action" data-skin="${i}">${s.skin===i?'Выбран':i===0?'Выбрать':'1000 🍞'}</button></div>`).join('');
-c.querySelectorAll('[data-skin]').forEach(b=>{b.onclick=()=>{
-let i=Number(b.dataset.skin);
-if(s.skin===i)return;
+c.querySelectorAll('[data-skin]').forEach(b=>b.onclick=()=>{
+let i=Number(b.dataset.skin);if(s.skin===i)return;
 if(i===0)s.skin=0;
 else if(s.coins>=1000){s.coins-=1000;s.skin=i}
 else{alert('Не хватает печеогароков!');return}
 update();
-}});
+});
 }
 }
 
 function openChest(){
-const cost=1500;
-if(s.coins<cost){alert('Не хватает печеогароков! Нужно 1500 🍞.');return}
-s.coins-=cost;
-const pool=[
-{rarity:'epic',weight:40},
-{rarity:'legendary',weight:25},
-{rarity:'mythic',weight:15},
-{rarity:'secret',weight:8},
-{rarity:'relic',weight:5},
-{rarity:'artifact',weight:3},
-{rarity:'amulet',weight:2.5},
-{rarity:'ring',weight:1.5}
-];
-const total=pool.reduce((a,x)=>a+x.weight,0);
-let roll=Math.random()*total;
-let chosen=pool[0];
+if(s.coins<1500){alert('Не хватает печеогароков! Нужно 1500 🍞.');return}
+s.coins-=1500;
+const pool=[{rarity:'epic',weight:40},{rarity:'legendary',weight:25},{rarity:'mythic',weight:15},{rarity:'secret',weight:8},{rarity:'relic',weight:5},{rarity:'artifact',weight:3},{rarity:'amulet',weight:2.5},{rarity:'ring',weight:1.5}];
+const total=pool.reduce((a,x)=>a+x.weight,0);let roll=Math.random()*total,chosen=pool[0];
 for(const x of pool){roll-=x.weight;if(roll<0){chosen=x;break}}
-const categoryItems=items.filter(x=>{
-const map={
-epic:'Эпический предмет',
-legendary:'Легендарный предмет',
-mythic:'Мифический предмет',
-secret:'Секретный предмет',
-relic:'Реликвия',
-artifact:'Артефакт',
-amulet:'Амулет',
-ring:'Магическое кольцо'
-};
-return x.category===map[chosen.rarity];
-});
+const map={epic:'Эпический предмет',legendary:'Легендарный предмет',mythic:'Мифический предмет',secret:'Секретный предмет',relic:'Реликвия',artifact:'Артефакт',amulet:'Амулет',ring:'Магическое кольцо'};
+const categoryItems=items.filter(x=>x.category===map[chosen.rarity]);
 const prize=categoryItems[Math.floor(Math.random()*categoryItems.length)];
-if(s.itemsOwned.includes(prize.id)){
-s.coins+=100;
-alert(`📦 Дубликат!\n${prize.icon} ${prize.name}\nТы получил 100 🍞.`);
-}else{
-s.itemsOwned.push(prize.id);
-alert(`🎉 НОВЫЙ ПРЕДМЕТ!\n\n${prize.icon} ${prize.name}\n${prize.rarity}\n${prize.desc}`);
-}
+if(s.itemsOwned.includes(prize.id)){s.coins+=100;alert(`📦 Дубликат!\n${prize.icon} ${prize.name}\nТы получил 100 🍞.`)}
+else{s.itemsOwned.push(prize.id);alert(`🎉 НОВЫЙ ПРЕДМЕТ!\n\n${prize.icon} ${prize.name}\n${prize.rarity}\n${prize.desc}`)}
 update();
 }
-
 function portal(cost,pool){
 if(s.coins<cost){alert('Не хватает печеогароков!');return}
 s.coins-=cost;
