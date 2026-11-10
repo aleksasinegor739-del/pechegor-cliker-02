@@ -1,27 +1,74 @@
+<!DOCTYPE html>  <html lang="ru">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">  
+<title>ПЕЧЕГОР КЛИКЕР 02</title>  
+<style>  
+*{box-sizing:border-box}  body{
+margin:0;
+color:#f5f7ff;
+font-family:system-ui,Arial;
+min-height:100vh;
+position:relative;
+isolation:isolate;
+overflow-x:hidden;
+background:
+linear-gradient(180deg,#08091f 0%,#101638 48%,#080b20 100%);
+}
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>ПЕЧЕГОР КЛИКЕР 02</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;color:#f5f7ff;font-family:system-ui,Arial;min-height:100vh;position:relative;isolation:isolate;overflow-x:hidden;background:linear-gradient(180deg,#08091f 0%,#101638 48%,#080b20 100%)}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:radial-gradient(2px 2px at 20px 30px,#fff 99%,transparent),radial-gradient(1px 1px at 80px 90px,#9ceeff 99%,transparent),radial-gradient(2px 2px at 150px 40px,#fff 99%,transparent),radial-gradient(1px 1px at 200px 130px,#c5a5ff 99%,transparent),radial-gradient(2px 2px at 250px 200px,#fff 99%,transparent),radial-gradient(1px 1px at 300px 70px,#9ceeff 99%,transparent);background-size:320px 260px;opacity:.65;animation:stars 55s linear infinite}
-body:after{content:"";position:fixed;inset:-30%;pointer-events:none;z-index:-2;background:radial-gradient(ellipse at 15% 25%,#713cff55 0%,transparent 32%),radial-gradient(ellipse at 80% 20%,#087bff55 0%,transparent 30%),radial-gradient(ellipse at 55% 70%,#d02bff33 0%,transparent 35%),radial-gradient(ellipse at 20% 85%,#00d9ff33 0%,transparent 30%);filter:blur(35px);animation:nebula 18s ease-in-out infinite alternate}
-@keyframes stars{from{background-position:0 0}to{background-position:320px 520px}}
-@keyframes nebula{0%{transform:translate(-2%,0) scale(1)}50%{transform:translate(2%,2%) scale(1.08)}100%{transform:translate(-1%,3%) scale(1.04)}}
+body:before{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+z-index:-1;
+background-image:
+radial-gradient(2px 2px at 20px 30px,#fff 99%,transparent),
+radial-gradient(1px 1px at 80px 90px,#9ceeff 99%,transparent),
+radial-gradient(2px 2px at 150px 40px,#fff 99%,transparent),
+radial-gradient(1px 1px at 200px 130px,#c5a5ff 99%,transparent),
+radial-gradient(2px 2px at 250px 200px,#fff 99%,transparent),
+radial-gradient(1px 1px at 300px 70px,#9ceeff 99%,transparent);
+background-size:320px 260px;
+opacity:.65;
+animation:stars 55s linear infinite;
+}
+
+body:after{
+content:"";
+position:fixed;
+inset:-30%;
+pointer-events:none;
+z-index:-2;
+background:
+radial-gradient(ellipse at 15% 25%,#713cff55 0%,transparent 32%),
+radial-gradient(ellipse at 80% 20%,#087bff55 0%,transparent 30%),
+radial-gradient(ellipse at 55% 70%,#d02bff33 0%,transparent 35%),
+radial-gradient(ellipse at 20% 85%,#00d9ff33 0%,transparent 30%);
+filter:blur(35px);
+animation:nebula 18s ease-in-out infinite alternate;
+}
+
+@keyframes stars{
+from{background-position:0 0}
+to{background-position:320px 520px}
+}
+
+@keyframes nebula{
+0%{transform:translate(-2%,0) scale(1)}
+50%{transform:translate(2%,2%) scale(1.08)}
+100%{transform:translate(-1%,3%) scale(1.04)}
+}
+
 header{text-align:center;padding:20px 10px 8px}
 h1{margin:0;color:#9ceeff;font-size:clamp(24px,5vw,40px);text-shadow:0 0 18px #36c9ff}
 header p{color:#b9c7e8;margin:5px}
 .wrap{width:min(1000px,94vw);margin:auto;position:relative}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
 .stat,.panel{background:#121d3bed;border:1px solid #3b4d7b;border-radius:17px;box-shadow:0 10px 30px #0004}
 .stat{text-align:center;padding:10px}
 .stat small{display:block;color:#b9c7e8;font-size:12px}
 .stat strong{font-size:clamp(17px,3vw,24px)}
-.online-number{color:#79ffad;text-shadow:0 0 12px #35ff8a}
 .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:13px}
 .panel{padding:15px}
 .hero{text-align:center;min-height:390px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
@@ -56,7 +103,6 @@ h2{font-size:19px;margin:4px 0 10px}
 .desc b{display:block}
 .desc small,.muted{color:#b9c7e8;font-size:12px}
 .action{border:0;border-radius:10px;background:linear-gradient(135deg,#61dafa,#3d92e7);color:#07152e;font-weight:900;padding:9px 11px;cursor:pointer}
-.action:disabled{opacity:.5;cursor:not-allowed}
 .portal{padding:13px;border-radius:14px;margin:9px 0;background:linear-gradient(120deg,#143e58,#24204f);border:1px solid #5a77b9}
 .portal h3{margin:0 0 5px}
 .portal p{color:#b9c7e8;font-size:13px;margin:0 0 9px}
@@ -80,213 +126,222 @@ h2{font-size:19px;margin:4px 0 10px}
 .slime.skin-cone::after{content:'🚧'}
 .slime.skin-hamster::after,.slime.skin-raccoon::after,.slime.skin-fox::after,.slime.skin-chess::after,.slime.skin-cone::after{font-size:132px;line-height:1;filter:drop-shadow(0 8px 10px #0008)}
 .slime.skin-hamster .shine,.slime.skin-hamster .eyes,.slime.skin-hamster .mouth,.slime.skin-raccoon .shine,.slime.skin-raccoon .eyes,.slime.skin-raccoon .mouth,.slime.skin-fox .shine,.slime.skin-fox .eyes,.slime.skin-fox .mouth,.slime.skin-chess .shine,.slime.skin-chess .eyes,.slime.skin-chess .mouth,.slime.skin-cone .shine,.slime.skin-cone .eyes,.slime.skin-cone .mouth{display:none}
-@media(max-width:720px){.layout{grid-template-columns:1fr}.hero{min-height:350px}.panel{padding:12px}.stats{grid-template-columns:repeat(2,1fr);gap:6px}.stat{padding:8px 3px}}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.hero{min-height:350px}.panel{padding:12px}.stats{gap:6px}.stat{padding:8px 3px}}
 </style>
-</head>
-<body>
-<header>
-<h1>🍞 ПЕЧЕГОР КЛИКЕР 02</h1>
-<p>Космическая слизь собирает печеогароки!</p>
-</header>
-<main class="wrap">
-<div class="stats">
-<div class="stat"><small>🍞 Печеогароки</small><strong id="coins">0</strong></div>
-<div class="stat"><small>⚡ Энергия</small><strong id="energy">100 / 100</strong></div>
-<div class="stat"><small>⭐ Уровень</small><strong id="level">1</strong></div>
-<div class="stat"><small>👥 Онлайн</small><strong class="online-number" id="online">128</strong></div>
-</div>
-<div class="layout">
-<section class="panel hero">
-<div class="rank" id="rank">КОСМИЧЕСКИЙ НОВИЧОК</div>
-<div class="orbit" id="orbit"></div>
-<button class="tap" id="tap" aria-label="Нажать на слизь">
-<div class="crown">👑</div>
-<div class="slime skin-blue" id="slime">
-<div class="shine"></div>
-<div class="eyes"><i class="eye"></i><i class="eye"></i></div>
-<div class="mouth"></div>
-</div>
-</button>
-<p class="hint">Нажимай на слизь! <b id="perTap">+1 🍞</b></p>
-<p class="notice">Телефон: касайся · ПК: мышь или пробел</p>
-</section>
-<section class="panel">
-<nav class="tabs">
-<button class="tab active" data-tab="shop">🛒 Магазин</button>
-<button class="tab" data-tab="portals">🌀 Порталы</button>
-<button class="tab" data-tab="pets">🐾 Питомцы</button>
-<button class="tab" data-tab="skins">🎨 Скины</button>
-<button class="tab" data-tab="luck">🎡 Зал удачи</button>
-</nav>
-<div id="content"></div>
-</section>
-</div>
-</main>
-<script>
-const $=id=>document.getElementById(id);
-const defaults={coins:0,energy:100,maxEnergy:100,level:1,tapPower:1,auto:0,owned:[],skin:0,upgrades:0,equipped:[],petLevels:{}};
-let saved={};
-try{saved=JSON.parse(localStorage.getItem('pechegor-save')||'{}')||{}}catch(e){}
-let s={...defaults,...saved};
-s.owned=Array.isArray(s.owned)?s.owned:[];
-s.equipped=Array.isArray(s.equipped)?s.equipped.filter(id=>s.owned.includes(id)).slice(0,5):[];
-s.petLevels=s.petLevels&&typeof s.petLevels==='object'?s.petLevels:{};
-if(!Number.isFinite(s.coins)||s.coins<0)s.coins=0;
-if(!Number.isFinite(s.energy)||s.energy<0)s.energy=100;
-if(!Number.isFinite(s.maxEnergy)||s.maxEnergy<1)s.maxEnergy=100;
-if(!Number.isFinite(s.level)||s.level<1)s.level=1;
-if(!Number.isFinite(s.tapPower)||s.tapPower<1)s.tapPower=1;
-if(!Number.isFinite(s.auto)||s.auto<0)s.auto=0;
-if(!Number.isFinite(s.upgrades)||s.upgrades<0)s.upgrades=0;
-if(!Number.isInteger(s.skin)||s.skin<0||s.skin>8)s.skin=0;
 
-let onlineCount=128+Math.floor(Math.random()*90);
-$('online').textContent=onlineCount.toLocaleString('ru-RU');
-
-setInterval(()=>{
-onlineCount+=Math.floor(Math.random()*7)-3;
-onlineCount=Math.max(1,onlineCount);
-$('online').textContent=onlineCount.toLocaleString('ru-RU');
-},5000);
-
-let tab='shop';
-const pets=[
-{id:'star',name:'Звёздный малыш',emoji:'⭐',rarity:'Обычный',mult:1},
-{id:'moon',name:'Лунный котик',emoji:'🐈',rarity:'Редкий',mult:2},
-{id:'alien',name:'Пузырчатый пришелец',emoji:'👾',rarity:'Эпический',mult:4},
-{id:'dragon',name:'Космодракон',emoji:'🐉',rarity:'Легендарный',mult:8},
-{id:'ghost',name:'Секретная слизь',emoji:'👻',rarity:'Секретный',mult:15},
-{id:'fox',name:'Звёздная лисичка',emoji:'🦊',rarity:'Редкий',mult:3},
-{id:'robot',name:'Робот-помощник',emoji:'🤖',rarity:'Обычный',mult:1},
-{id:'unicorn',name:'Космический единорог',emoji:'🦄',rarity:'Эпический',mult:5},
-{id:'octopus',name:'Галактический осьминог',emoji:'🐙',rarity:'Редкий',mult:3},
-{id:'phoenix',name:'Золотой феникс',emoji:'🔥',rarity:'Легендарный',mult:10},
-{id:'diamond',name:'Алмазный малыш',emoji:'💎',rarity:'Эпический',mult:6},
-{id:'crown',name:'Королевская слизь',emoji:'👑',rarity:'Секретный',mult:20},
-{id:'shark',name:'Космическая акула',emoji:'🦈',rarity:'Редкий',mult:4},
-{id:'bear',name:'Медвежонок-комета',emoji:'🐻',rarity:'Обычный',mult:2},
-{id:'planet',name:'Живая планета',emoji:'🪐',rarity:'Легендарный',mult:12},
-{id:'comet',name:'Кометный король',emoji:'☄️',rarity:'Легендарный',mult:15},
-{id:'nebula',name:'Туманная слизь',emoji:'🌌',rarity:'Секретный',mult:25},
-{id:'blackhole',name:'Повелитель чёрной дыры',emoji:'🕳️',rarity:'Мифический',mult:35}
-];
-const skins=[
-{name:'Голубая слизь',emoji:'🩵',className:'blue'},
-{name:'Розовая слизь',emoji:'🩷',className:'pink'},
-{name:'Золотая слизь',emoji:'💛',className:'gold'},
-{name:'Галактическая слизь',emoji:'💜',className:'galaxy'},
-{name:'Пчёлка',emoji:'🐝',className:'bee'},
-{name:'Красная слизь',emoji:'🔴',className:'red'},
-{name:'Лиса',emoji:'🦊',className:'fox'},
-{name:'Шахматы',emoji:'♟️',className:'chess'},
-{name:'Конус',emoji:'🚧',className:'cone'}
-];
-const fmt=n=>Math.floor(n).toLocaleString('ru-RU');
-function save(){try{localStorage.setItem('pechegor-save',JSON.stringify(s))}catch(e){}}
-function petLevel(id){return Math.max(1,Math.min(5,Number(s.petLevels[id])||1))}
-function mult(){return 1+s.equipped.reduce((a,id)=>{const p=pets.find(x=>x.id===id);return a+(p?.mult||0)*.15*petLevel(id)},0)}
-function update(){
-$('coins').textContent=fmt(s.coins);
-$('energy').textContent=`${Math.floor(s.energy)} / ${s.maxEnergy}`;
-$('level').textContent=s.level;
-$('perTap').textContent=`+${fmt(s.tapPower*mult())} 🍞`;
-$('rank').textContent=s.level<5?'КОСМИЧЕСКИЙ НОВИЧОК':s.level<12?'ПОВЕЛИТЕЛЬ ПЕЧЕОГАРОКОВ':'КОСМИЧЕСКИЙ КОРОЛЬ';
-$('slime').className='slime skin-'+(skins[s.skin]?.className||'blue');
-$('orbit').innerHTML=s.equipped.slice(0,5).map(id=>`<span class="petfloat">${pets.find(p=>p.id===id)?.emoji||'⭐'}</span>`).join('');
-document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-render();
-}
-function gain(){
-if(s.energy<1)return;
-s.energy--;
-let n=s.tapPower*mult();
-s.coins+=n;
-s.level=Math.max(s.level,1+Math.floor(s.coins/100));
-update();save();
-let f=document.createElement('span');
-f.className='float';f.textContent=`+${fmt(n)} 🍞`;
-f.style.left=(35+Math.random()*30)+'%';f.style.top='43%';
-document.querySelector('.hero').append(f);
-setTimeout(()=>f.remove(),850);
-}
-const tapButton=$('tap');
-let lastTouchTime=0;
-tapButton.addEventListener('touchstart',e=>{e.preventDefault();lastTouchTime=Date.now();for(const touch of e.changedTouches)gain()},{passive:false});
-tapButton.addEventListener('click',e=>{e.preventDefault();if(Date.now()-lastTouchTime>700)gain()});
-document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();gain()}});
-setInterval(()=>{
-let changed=false;
-if(s.energy<s.maxEnergy){s.energy=Math.min(s.maxEnergy,s.energy+1);changed=true}
-if(s.auto>0){s.coins+=s.auto*mult();s.level=Math.max(s.level,1+Math.floor(s.coins/100));changed=true}
-if(changed){update();save()}
-},1000);
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;update()}));
-function buy(cost,fn){
-if(s.coins<cost){alert('Не хватает печеогароков!');return}
-s.coins-=cost;fn();save();update();
-}
-function render(){
-let c=$('content');
-if(tab==='shop'){
-let tc=Math.floor(20*Math.pow(1.65,s.upgrades));
-let ac=Math.floor(100*Math.pow(1.8,s.auto));
-c.innerHTML=`
-<h2>Улучшения</h2>
-<div class="item"><span class="emoji">👆</span><div class="desc"><b>Сильный тап</b><small>+1 печеогарок за нажатие</small></div><button class="action" id="bt">🍞 ${fmt(tc)}</button></div>
-<div class="item"><span class="emoji">🤖</span><div class="desc"><b>Автосборщик</b><small>+1 печеогарок в секунду</small></div><button class="action" id="ba">🍞 ${fmt(ac)}</button></div>
-<div class="item"><span class="emoji">⚡</span><div class="desc"><b>Батарея</b><small>+25 к максимуму энергии</small></div><button class="action" id="be">🍞 150</button></div>
-<div class="item"><span class="emoji">🔋</span><div class="desc"><b>Пополнить энергию</b><small>Полностью восстанавливает энергию</small></div><button class="action" id="refill" ${s.energy>=s.maxEnergy?'disabled':''}>🍞 5000</button></div>`;
-$('bt').onclick=()=>buy(tc,()=>{s.tapPower++;s.upgrades++});
-$('ba').onclick=()=>buy(ac,()=>s.auto++);
-$('be').onclick=()=>buy(150,()=>{s.maxEnergy+=25;s.energy=s.maxEnergy});
-$('refill').onclick=()=>{if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}buy(5000,()=>{s.energy=s.maxEnergy})};
-}else if(tab==='portals'){
-c.innerHTML=`
-<h2>Космические порталы</h2>
-<div class="portal"><h3>🟢 Зелёный портал</h3><p>Обычные и редкие питомцы</p><button class="action" id="p1">Открыть · 100 🍞</button></div>
-<div class="portal"><h3>🟣 Фиолетовый портал</h3><p>Редкие и эпические питомцы</p><button class="action" id="p2">Открыть · 500 🍞</button></div>
-<div class="portal"><h3>🟡 Золотой портал</h3><p>Эпические, легендарные и секретные питомцы</p><button class="action" id="p3">Открыть · 2 000 🍞</button></div>
-<p class="notice">Повторный питомец превращается в 50 🍞.</p>`;
-$('p1').onclick=()=>portal(100,['star','star','robot','bear','moon','fox','shark']);
-$('p2').onclick=()=>portal(500,['moon','fox','octopus','alien','unicorn','diamond','shark']);
-$('p3').onclick=()=>portal(2000,['alien','dragon','ghost','phoenix','diamond','crown','planet','comet','nebula','blackhole']);
-}else if(tab==='pets'){
-const owned=s.owned.filter(id=>pets.some(p=>p.id===id));
-c.innerHTML=`<h2>Мои питомцы</h2><p class="notice">Выбери до 5 питомцев — они будут летать вокруг слизи и усиливать тап. Улучшение повышает их бонус.</p><p>На орбите: <b>${s.equipped.length}/5</b></p><div class="petgrid">`+
-(owned.length?owned.map(id=>{
-let p=pets.find(x=>x.id===id),lv=petLevel(id),cost=lv*500,active=s.equipped.includes(id);
-return `<div class="petcard"><div class="big">${p.emoji}</div><b>${p.name}</b><small>${p.rarity} · бонус x${p.mult} · уровень ${lv}/5</small><button class="action" data-equip="${id}" style="margin:7px 2px 3px">${active?'Снять':'Выбрать'}</button><button class="action" data-upgrade="${id}" style="margin:3px 2px">${lv>=5?'Максимум':'Улучшить · '+fmt(cost)+' 🍞'}</button></div>`;
-}).join(''):'<p class="muted">Пока питомцев нет. Загляни в порталы! 🌀</p>')+'</div>';
-c.querySelectorAll('[data-equip]').forEach(b=>{b.onclick=()=>{let id=b.dataset.equip;if(s.equipped.includes(id)){s.equipped=s.equipped.filter(x=>x!==id)}else if(s.equipped.length<5){s.equipped.push(id)}else{alert('Можно выбрать не больше 5 питомцев!');return}save();update()}});
-c.querySelectorAll('[data-upgrade]').forEach(b=>{b.onclick=()=>{let id=b.dataset.upgrade,lv=petLevel(id),cost=lv*500;if(lv>=5){alert('У этого питомца максимальный уровень!');return}if(s.coins<cost){alert('Не хватает печеогароков!');return}s.coins-=cost;s.petLevels[id]=lv+1;save();update()}});
-}else if(tab==='luck'){
-c.innerHTML=`<h2>🎡 Зал удачи</h2><div class="portal"><h3>Колесо космических призов</h3><p>Стоимость прокрутки: <b>2500 🍞</b>. Призы начисляются в игровой валюте.</p><div style="font-size:56px;text-align:center;margin:18px">🎡</div><button class="action" id="spin">Крутить · 2500 🍞</button><p class="notice" id="luckResult">Выбери прокрутку! Удачи!</p><p class="notice">Шансы после нормализации: 10000 — 0,32%; 5000 — 3,22%; 2500 — 6,43%; 1000 — 9,65%; 500 — 32,15%; 100 — 48,23%.</p></div>`;
-$('spin').onclick=()=>{
-if(s.coins<2500){$('luckResult').textContent='Не хватает печеогароков! Нужно 2500 🍞.';return}
-s.coins-=2500;
-const prizes=[{label:'10 000 🍞',coins:10000,weight:0.5},{label:'5 000 🍞',coins:5000,weight:5},{label:'2 500 🍞',coins:2500,weight:10},{label:'1 000 🍞',coins:1000,weight:15},{label:'500 🍞',coins:500,weight:50},{label:'100 🍞',coins:100,weight:75}];
-const total=prizes.reduce((sum,p)=>sum+p.weight,0);
-let roll=Math.random()*total,prize=prizes[prizes.length-1];
-for(const item of prizes){roll-=item.weight;if(roll<0){prize=item;break}}
-s.coins+=prize.coins;s.level=Math.max(s.level,1+Math.floor(s.coins/100));save();update();
-const result=$('luckResult');if(result)result.textContent='🎉 Выпало: '+prize.label+'!';
-};
-}else if(tab==='skins'){
-c.innerHTML=`<h2>🎨 Космические скины</h2><p class="notice">Выбери новый облик слизи! Каждый скин стоит 1000 🍞.</p>`+
-skins.map((sk,i)=>`<div class="item"><span class="emoji">${sk.emoji}</span><div class="desc"><b>${sk.name}</b><small>${i===0?'Стандартный':'Новый облик слизи'}</small></div><button class="action" data-skin="${i}">${s.skin===i?'Выбран':i===0?'Выбрать':'1000 🍞'}</button></div>`).join('');
-c.querySelectorAll('[data-skin]').forEach(b=>{b.onclick=()=>{let i=Number(b.dataset.skin);if(s.skin===i)return;if(i===0){s.skin=0}else if(s.coins>=1000){s.coins-=1000;s.skin=i}else{alert('Не хватает печеогароков!');return}save();update()}});
-}
-}
-function portal(cost,pool){
-if(s.coins<cost){alert('Не хватает печеогароков!');return}
-s.coins-=cost;
-let id=pool[Math.floor(Math.random()*pool.length)],p=pets.find(x=>x.id===id);
-if(!p){save();update();return}
-if(s.owned.includes(id)){s.coins+=50;alert(`${p.emoji} ${p.name} уже есть! +50 🍞`)}
-else{s.owned.push(id);alert(`Новый питомец: ${p.emoji} ${p.name}!\nРедкость: ${p.rarity}`)}
-save();update();
-}
-update();
-</script>
-</body>
-</html>
+</head>  
+<body>  
+<header>  
+<h1>🍞 ПЕЧЕГОР КЛИКЕР 02</h1>  
+<p>Космическая слизь собирает печеогароки!</p>  
+</header>  
+<main class="wrap">  
+<div class="stats">  
+<div class="stat"><small>🍞 Печеогароки</small><strong id="coins">0</strong></div>  
+<div class="stat"><small>⚡ Энергия</small><strong id="energy">100 / 100</strong></div>  
+<div class="stat"><small>⭐ Уровень</small><strong id="level">1</strong></div>  
+</div>  
+<div class="layout">  
+<section class="panel hero">  
+<div class="rank" id="rank">КОСМИЧЕСКИЙ НОВИЧОК</div>  
+<div class="orbit" id="orbit"></div>  
+<button class="tap" id="tap" aria-label="Нажать на слизь">  
+<div class="crown">👑</div>  
+<div class="slime skin-blue" id="slime">  
+<div class="shine"></div>  
+<div class="eyes"><i class="eye"></i><i class="eye"></i></div>  
+<div class="mouth"></div>  
+</div>  
+</button>  
+<p class="hint">Нажимай на слизь! <b id="perTap">+1 🍞</b></p>  
+<p class="notice">Телефон: касайся · ПК: мышь или пробел</p>  
+</section>  
+<section class="panel">  
+<nav class="tabs">  
+<button class="tab active" data-tab="shop">🛒 Магазин</button>  
+<button class="tab" data-tab="portals">🌀 Порталы</button>  
+<button class="tab" data-tab="pets">🐾 Питомцы</button>  
+<button class="tab" data-tab="skins">🎨 Скины</button>  
+<button class="tab" data-tab="luck">🎡 Зал удачи</button>  
+</nav>  
+<div id="content"></div>  
+</section>  
+</div>  
+</main>  
+<script>  
+const $=id=>document.getElementById(id);  
+const defaults={coins:0,energy:100,maxEnergy:100,level:1,tapPower:1,auto:0,owned:[],skin:0,upgrades:0,equipped:[],petLevels:{}};  
+let saved={};  
+try{saved=JSON.parse(localStorage.getItem('pechegor-save')||'{}')||{}}catch(e){}  
+let s={...defaults,...saved};  
+s.owned=Array.isArray(s.owned)?s.owned:[];  
+s.equipped=Array.isArray(s.equipped)?s.equipped.filter(id=>s.owned.includes(id)).slice(0,5):[];  
+s.petLevels=s.petLevels&&typeof s.petLevels==='object'?s.petLevels:{};  
+if(!Number.isFinite(s.coins)||s.coins<0)s.coins=0;  
+if(!Number.isFinite(s.energy)||s.energy<0)s.energy=100;  
+if(!Number.isFinite(s.maxEnergy)||s.maxEnergy<1)s.maxEnergy=100;  
+if(!Number.isFinite(s.level)||s.level<1)s.level=1;  
+if(!Number.isFinite(s.tapPower)||s.tapPower<1)s.tapPower=1;  
+if(!Number.isFinite(s.auto)||s.auto<0)s.auto=0;  
+if(!Number.isFinite(s.upgrades)||s.upgrades<0)s.upgrades=0;  
+if(!Number.isInteger(s.skin)||s.skin<0||s.skin>8)s.skin=0;  
+let tab='shop';  
+const pets=[  
+{id:'star',name:'Звёздный малыш',emoji:'⭐',rarity:'Обычный',mult:1},  
+{id:'moon',name:'Лунный котик',emoji:'🐈',rarity:'Редкий',mult:2},  
+{id:'alien',name:'Пузырчатый пришелец',emoji:'👾',rarity:'Эпический',mult:4},  
+{id:'dragon',name:'Космодракон',emoji:'🐉',rarity:'Легендарный',mult:8},  
+{id:'ghost',name:'Секретная слизь',emoji:'👻',rarity:'Секретный',mult:15},  
+{id:'fox',name:'Звёздная лисичка',emoji:'🦊',rarity:'Редкий',mult:3},  
+{id:'robot',name:'Робот-помощник',emoji:'🤖',rarity:'Обычный',mult:1},  
+{id:'unicorn',name:'Космический единорог',emoji:'🦄',rarity:'Эпический',mult:5},  
+{id:'octopus',name:'Галактический осьминог',emoji:'🐙',rarity:'Редкий',mult:3},  
+{id:'phoenix',name:'Золотой феникс',emoji:'🔥',rarity:'Легендарный',mult:10},  
+{id:'diamond',name:'Алмазный малыш',emoji:'💎',rarity:'Эпический',mult:6},  
+{id:'crown',name:'Королевская слизь',emoji:'👑',rarity:'Секретный',mult:20},  
+{id:'shark',name:'Космическая акула',emoji:'🦈',rarity:'Редкий',mult:4},  
+{id:'bear',name:'Медвежонок-комета',emoji:'🐻',rarity:'Обычный',mult:2},  
+{id:'planet',name:'Живая планета',emoji:'🪐',rarity:'Легендарный',mult:12},  
+{id:'comet',name:'Кометный король',emoji:'☄️',rarity:'Легендарный',mult:15},  
+{id:'nebula',name:'Туманная слизь',emoji:'🌌',rarity:'Секретный',mult:25},  
+{id:'blackhole',name:'Повелитель чёрной дыры',emoji:'🕳️',rarity:'Мифический',mult:35}  
+];  
+const skins=[  
+{name:'Голубая слизь',emoji:'🩵',className:'blue'},  
+{name:'Розовая слизь',emoji:'🩷',className:'pink'},  
+{name:'Золотая слизь',emoji:'💛',className:'gold'},  
+{name:'Галактическая слизь',emoji:'💜',className:'galaxy'},  
+{name:'Пчёлка',emoji:'🐝',className:'bee'},  
+{name:'Красная слизь',emoji:'🔴',className:'red'},  
+{name:'Лиса',emoji:'🦊',className:'fox'},  
+{name:'Шахматы',emoji:'♟️',className:'chess'},  
+{name:'Конус',emoji:'🚧',className:'cone'}  
+];  
+const fmt=n=>Math.floor(n).toLocaleString('ru-RU');  
+function save(){try{localStorage.setItem('pechegor-save',JSON.stringify(s))}catch(e){}}  
+function petLevel(id){return Math.max(1,Math.min(5,Number(s.petLevels[id])||1))}  
+function mult(){return 1+s.equipped.reduce((a,id)=>{const p=pets.find(x=>x.id===id);return a+(p?.mult||0)*.15*petLevel(id)},0)}  
+function update(){  
+$('coins').textContent=fmt(s.coins);  
+$('energy').textContent=`${Math.floor(s.energy)} / ${s.maxEnergy}`;  
+$('level').textContent=s.level;  
+$('perTap').textContent=`+${fmt(s.tapPower*mult())} 🍞`;  
+$('rank').textContent=s.level<5?'КОСМИЧЕСКИЙ НОВИЧОК':s.level<12?'ПОВЕЛИТЕЛЬ ПЕЧЕОГАРОКОВ':'КОСМИЧЕСКИЙ КОРОЛЬ';  
+$('slime').className='slime skin-'+(skins[s.skin]?.className||'blue');  
+$('orbit').innerHTML=s.equipped.slice(0,5).map(id=>`<span class="petfloat">${pets.find(p=>p.id===id)?.emoji||'⭐'}</span>`).join('');  
+document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));  
+render();  
+}  
+function gain(){  
+if(s.energy<1)return;  
+s.energy--;  
+let n=s.tapPower*mult();  
+s.coins+=n;  
+s.level=Math.max(s.level,1+Math.floor(s.coins/100));  
+update();save();  
+let f=document.createElement('span');  
+f.className='float';f.textContent=`+${fmt(n)} 🍞`;  
+f.style.left=(35+Math.random()*30)+'%';f.style.top='43%';  
+document.querySelector('.hero').append(f);  
+setTimeout(()=>f.remove(),850);  
+}  
+const tapButton=$('tap');  
+let lastTouchTime=0;  
+tapButton.addEventListener('touchstart',e=>{e.preventDefault();lastTouchTime=Date.now();for(const touch of e.changedTouches)gain()},{passive:false});  
+tapButton.addEventListener('click',e=>{e.preventDefault();if(Date.now()-lastTouchTime>700)gain()});  
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();gain()}});  
+setInterval(()=>{  
+let changed=false;  
+if(s.energy<s.maxEnergy){s.energy=Math.min(s.maxEnergy,s.energy+1);changed=true}  
+if(s.auto>0){s.coins+=s.auto*mult();s.level=Math.max(s.level,1+Math.floor(s.coins/100));changed=true}  
+if(changed){update();save()}  
+},1000);  
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;update()}));  
+function buy(cost,fn){  
+if(s.coins<cost){alert('Не хватает печеогароков!');return}  
+s.coins-=cost;fn();save();update();  
+}  
+function render(){  
+let c=$('content');  
+if(tab==='shop'){  
+let tc=Math.floor(20*Math.pow(1.65,s.upgrades));  
+let ac=Math.floor(100*Math.pow(1.8,s.auto));  
+c.innerHTML=`  
+<h2>Улучшения</h2>  
+<div class="item">  
+<span class="emoji">👆</span>  
+<div class="desc"><b>Сильный тап</b><small>+1 печеогарок за нажатие</small></div>  
+<button class="action" id="bt">🍞 ${fmt(tc)}</button>  
+</div>  
+<div class="item">  
+<span class="emoji">🤖</span>  
+<div class="desc"><b>Автосборщик</b><small>+1 печеогарок в секунду</small></div>  
+<button class="action" id="ba">🍞 ${fmt(ac)}</button>  
+</div>  
+<div class="item">  
+<span class="emoji">⚡</span>  
+<div class="desc"><b>Батарея</b><small>+25 к максимуму энергии</small></div>  
+<button class="action" id="be">🍞 150</button>  
+</div>  
+<div class="item">  
+<span class="emoji">🔋</span>  
+<div class="desc"><b>Пополнить энергию</b><small>Полностью восстанавливает энергию</small></div>  
+<button class="action" id="refill" ${s.energy>=s.maxEnergy?'disabled':''}>🍞 5000</button>  
+</div>`;  
+$('bt').onclick=()=>buy(tc,()=>{s.tapPower++;s.upgrades++});  
+$('ba').onclick=()=>buy(ac,()=>s.auto++);  
+$('be').onclick=()=>buy(150,()=>{s.maxEnergy+=25;s.energy=s.maxEnergy});  
+$('refill').onclick=()=>{  
+if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}  
+buy(5000,()=>{s.energy=s.maxEnergy});  
+};  
+}else if(tab==='portals'){  
+c.innerHTML=`  
+<h2>Космические порталы</h2>  
+<div class="portal"><h3>🟢 Зелёный портал</h3><p>Обычные и редкие питомцы</p><button class="action" id="p1">Открыть · 100 🍞</button></div>  
+<div class="portal"><h3>🟣 Фиолетовый портал</h3><p>Редкие и эпические питомцы</p><button class="action" id="p2">Открыть · 500 🍞</button></div>  
+<div class="portal"><h3>🟡 Золотой портал</h3><p>Эпические, легендарные и секретные питомцы</p><button class="action" id="p3">Открыть · 2 000 🍞</button></div>  
+<p class="notice">Повторный питомец превращается в 50 🍞.</p>`;  
+$('p1').onclick=()=>portal(100,['star','star','robot','bear','moon','fox','shark']);  
+$('p2').onclick=()=>portal(500,['moon','fox','octopus','alien','unicorn','diamond','shark']);  
+$('p3').onclick=()=>portal(2000,['alien','dragon','ghost','phoenix','diamond','crown','planet','comet','nebula','blackhole']);  
+}else if(tab==='pets'){  
+const owned=s.owned.filter(id=>pets.some(p=>p.id===id));  
+c.innerHTML=`<h2>Мои питомцы</h2><p class="notice">Выбери до 5 питомцев — они будут летать вокруг слизи и усиливать тап. Улучшение повышает их бонус.</p><p>На орбите: <b>${s.equipped.length}/5</b></p><div class="petgrid">`+  
+(owned.length?owned.map(id=>{  
+let p=pets.find(x=>x.id===id),lv=petLevel(id),cost=lv*500,active=s.equipped.includes(id);  
+return `<div class="petcard"><div class="big">${p.emoji}</div><b>${p.name}</b><small>${p.rarity} · бонус x${p.mult} · уровень ${lv}/5</small><button class="action" data-equip="${id}" style="margin:7px 2px 3px">${active?'Снять':'Выбрать'}</button><button class="action" data-upgrade="${id}" style="margin:3px 2px">${lv>=5?'Максимум':'Улучшить · '+fmt(cost)+' 🍞'}</button></div>`;  
+}).join(''):'<p class="muted">Пока питомцев нет. Загляни в порталы! 🌀</p>')+'</div>';  
+c.querySelectorAll('[data-equip]').forEach(b=>{b.onclick=()=>{let id=b.dataset.equip;if(s.equipped.includes(id)){s.equipped=s.equipped.filter(x=>x!==id)}else if(s.equipped.length<5){s.equipped.push(id)}else{alert('Можно выбрать не больше 5 питомцев!');return}save();update()}});  
+c.querySelectorAll('[data-upgrade]').forEach(b=>{b.onclick=()=>{let id=b.dataset.upgrade,lv=petLevel(id),cost=lv*500;if(lv>=5){alert('У этого питомца максимальный уровень!');return}if(s.coins<cost){alert('Не хватает печеогароков!');return}s.coins-=cost;s.petLevels[id]=lv+1;save();update()}});  
+}else if(tab==='luck'){  
+c.innerHTML=`<h2>🎡 Зал удачи</h2><div class="portal"><h3>Колесо космических призов</h3><p>Стоимость прокрутки: <b>2500 🍞</b>. Призы начисляются в игровой валюте.</p><div style="font-size:56px;text-align:center;margin:18px">🎡</div><button class="action" id="spin">Крутить · 2500 🍞</button><p class="notice" id="luckResult">Выбери прокрутку! Удачи!</p><p class="notice">Шансы после нормализации: 10000 — 0,32%; 5000 — 3,22%; 2500 — 6,43%; 1000 — 9,65%; 500 — 32,15%; 100 — 48,23%.</p></div>`;  
+$('spin').onclick=()=>{  
+if(s.coins<2500){$('luckResult').textContent='Не хватает печеогароков! Нужно 2500 🍞.';return}  
+s.coins-=2500;  
+const prizes=[{label:'10 000 🍞',coins:10000,weight:0.5},{label:'5 000 🍞',coins:5000,weight:5},{label:'2 500 🍞',coins:2500,weight:10},{label:'1 000 🍞',coins:1000,weight:15},{label:'500 🍞',coins:500,weight:50},{label:'100 🍞',coins:100,weight:75}];  
+const total=prizes.reduce((sum,p)=>sum+p.weight,0);  
+let roll=Math.random()*total,prize=prizes[prizes.length-1];  
+for(const item of prizes){roll-=item.weight;if(roll<0){prize=item;break}}  
+s.coins+=prize.coins;s.level=Math.max(s.level,1+Math.floor(s.coins/100));save();update();  
+const result=$('luckResult');if(result)result.textContent='🎉 Выпало: '+prize.label+'!';  
+};  
+}else if(tab==='skins'){  
+c.innerHTML=`<h2>🎨 Космические скины</h2><p class="notice">Выбери новый облик слизи! Каждый скин стоит 1000 🍞.</p>`+  
+skins.map((sk,i)=>`<div class="item"><span class="emoji">${sk.emoji}</span><div class="desc"><b>${sk.name}</b><small>${i===0?'Стандартный':'Новый облик слизи'}</small></div><button class="action" data-skin="${i}">${s.skin===i?'Выбран':i===0?'Выбрать':'1000 🍞'}</button></div>`).join('');  
+c.querySelectorAll('[data-skin]').forEach(b=>{b.onclick=()=>{let i=Number(b.dataset.skin);if(s.skin===i)return;if(i===0){s.skin=0}else if(s.coins>=1000){s.coins-=1000;s.skin=i}else{alert('Не хватает печеогароков!');return}save();update()}});  
+}  
+}  
+function portal(cost,pool){  
+if(s.coins<cost){alert('Не хватает печеогароков!');return}  
+s.coins-=cost;  
+let id=pool[Math.floor(Math.random()*pool.length)],p=pets.find(x=>x.id===id);  
+if(!p){save();update();return}  
+if(s.owned.includes(id)){s.coins+=50;alert(`${p.emoji} ${p.name} уже есть! +50 🍞`)}  
+else{s.owned.push(id);alert(`Новый питомец: ${p.emoji} ${p.name}!\nРедкость: ${p.rarity}`)}  
+save();update();  
+}  
+update();  
+</script>  
+</body>  
+</html>  
