@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -37,8 +36,13 @@ header p{color:#b9c7e8;margin:5px}
 .crown{position:absolute;z-index:2;top:2px;left:50%;transform:translateX(-50%) rotate(-7deg);font-size:66px;filter:drop-shadow(0 5px 5px #0008)}
 .orbit{position:absolute;inset:10px;pointer-events:none;animation:orbit 9s linear infinite}
 .petfloat{position:absolute;font-size:31px;filter:drop-shadow(0 0 8px #fff9)}
-.petfloat:nth-child(1){top:15px;left:12%}.petfloat:nth-child(2){right:8%;top:55%}.petfloat:nth-child(3){left:8%;bottom:12%}.petfloat:nth-child(4){right:12%;top:12%}.petfloat:nth-child(5){left:48%;bottom:2%}
-.hint{color:#b9c7e8;margin:0}.hint b{color:#9ceeff}
+.petfloat:nth-child(1){top:15px;left:12%}
+.petfloat:nth-child(2){right:8%;top:55%}
+.petfloat:nth-child(3){left:8%;bottom:12%}
+.petfloat:nth-child(4){right:12%;top:12%}
+.petfloat:nth-child(5){left:48%;bottom:2%}
+.hint{color:#b9c7e8;margin:0}
+.hint b{color:#9ceeff}
 .float{position:absolute;color:#ffe58c;font-weight:900;font-size:22px;pointer-events:none;animation:float .8s forwards;text-shadow:0 2px 8px #000}
 .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .tab{border:1px solid #3b4d7b;background:#0b1531;color:white;padding:8px 10px;border-radius:11px;cursor:pointer;font-weight:700}
@@ -206,8 +210,10 @@ const pets=[
 {id:'planet',name:'Живая планета',emoji:'🪐',rarity:'Легендарный',mult:12},
 {id:'comet',name:'Кометный король',emoji:'☄️',rarity:'Легендарный',mult:15},
 {id:'nebula',name:'Туманная слизь',emoji:'🌌',rarity:'Секретный',mult:25},
-{id:'blackhole',name:'Повелитель чёрной дыры',emoji:'🕳️',rarity:'Мифический',mult:35}
+{id:'blackhole',name:'Повелитель чёрной дыры',emoji:'🕳️',rarity:'Мифический',mult:35},
+{id:'dimension_pet',name:'Бог измерений',emoji:'🌌',rarity:'Божественный',mult:100}
 ];
+
 const skins=[
 {name:'Голубая слизь',emoji:'🩵',className:'blue'},
 {name:'Розовая слизь',emoji:'🩷',className:'pink'},
@@ -331,10 +337,34 @@ if(s.bossHP[s.currentWorld]<=0){
 s.bossesDefeated.push(s.currentWorld);
 s.coins+=w.reward;
 s.level=Math.max(s.level,1+Math.floor(s.coins/100));
-alert(`🏆 ПОБЕДА!\nТы победил: ${w.boss}!\nНаграда: ${fmt(w.reward)} 🍞`);
+
+if(s.currentWorld===9){
+const petId='dimension_pet';
+if(!s.owned.includes(petId)){
+s.owned.push(petId);
+}
+alert(`🌌 НЕВЕРОЯТНАЯ ПОБЕДА!
+
+Ты победил Повелителя измерений!
+
+🎁 ПОЛУЧЕН БОЖЕСТВЕННЫЙ ПИТОМЕЦ!
+
+🌌 Бог измерений
+⚡ Бонус: x100
+
+🍞 Награда: ${fmt(w.reward)}`);
+}else{
+alert(`🏆 ПОБЕДА!
+Ты победил: ${w.boss}!
+Награда: ${fmt(w.reward)} 🍞`);
+}
+
+// Победа над боссом открывает следующий мир бесплатно.
+if(s.currentWorld<worlds.length-1&&!s.unlockedWorlds.includes(s.currentWorld+1)){
+s.unlockedWorlds.push(s.currentWorld+1);
+}
 }else{
 $('content').querySelector('.boss-health span').style.width=(s.bossHP[s.currentWorld]/w.hp*100)+'%';
-$('content').querySelector('.boss').querySelector('p:nth-of-type(3)').innerHTML=`Здоровье: <b>${fmt(s.bossHP[s.currentWorld])} / ${fmt(w.hp)}</b>`;
 }
 update();
 };
