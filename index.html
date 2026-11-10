@@ -5,19 +5,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>ПЕЧЕГОР КЛИКЕР 02</title>
-
 <style>
 *{box-sizing:border-box}
-body{
-margin:0;color:#f5f7ff;font-family:system-ui,Arial;
-background:radial-gradient(ellipse at 50% 15%,#244779,#10183d 48%,#070b20);
-min-height:100vh
-}
-body:before{
-content:"";position:fixed;inset:0;pointer-events:none;
-background-image:radial-gradient(#fff 1px,transparent 1.5px),radial-gradient(#9cecff 1px,transparent 1.5px);
-background-size:83px 83px,137px 137px;opacity:.35
-}
+body{margin:0;color:#f5f7ff;font-family:system-ui,Arial;background:radial-gradient(ellipse at 50% 15%,#244779,#10183d 48%,#070b20);min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(#fff 1px,transparent 1.5px),radial-gradient(#9cecff 1px,transparent 1.5px);background-size:83px 83px,137px 137px;opacity:.35}
 header{text-align:center;padding:20px 10px 8px}
 h1{margin:0;color:#9ceeff;font-size:clamp(24px,5vw,40px);text-shadow:0 0 18px #36c9ff}
 header p{color:#b9c7e8;margin:5px}
@@ -29,38 +20,16 @@ header p{color:#b9c7e8;margin:5px}
 .stat strong{font-size:clamp(17px,3vw,24px)}
 .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:13px}
 .panel{padding:15px}
-.hero{
-text-align:center;min-height:390px;display:flex;flex-direction:column;
-align-items:center;justify-content:center;position:relative;overflow:hidden
-}
+.hero{text-align:center;min-height:390px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .rank{color:#ffdc78;font-weight:800;margin-bottom:8px}
-.tap{
-border:0;background:none;width:min(270px,75vw);height:255px;
-display:grid;place-items:center;position:relative;cursor:pointer;touch-action:manipulation
-}
-.slime{
-width:190px;height:165px;border-radius:48% 52% 43% 47%/58% 60% 38% 40%;
-position:relative;
-background:radial-gradient(ellipse at 32% 22%,#ffffffc9 0 5%,#b8f7ff99 18%,#55d7f2b8 52%,#1593c9d9 100%);
-border:2px solid #bdf7ffb0;
-box-shadow:inset -18px -18px 35px #0879b377,inset 14px 12px 25px #ffffff55,0 0 45px #4adfff99;
-animation:bob 2.5s ease-in-out infinite
-}
+.tap{border:0;background:none;width:min(270px,75vw);height:255px;display:grid;place-items:center;position:relative;cursor:pointer;touch-action:manipulation}
+.slime{width:190px;height:165px;border-radius:48% 52% 43% 47%/58% 60% 38% 40%;position:relative;background:radial-gradient(ellipse at 32% 22%,#ffffffc9 0 5%,#b8f7ff99 18%,#55d7f2b8 52%,#1593c9d9 100%);border:2px solid #bdf7ffb0;box-shadow:inset -18px -18px 35px #0879b377,inset 14px 12px 25px #ffffff55,0 0 45px #4adfff99;animation:bob 2.5s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-9px) scale(1.025,.98)}}
-.shine{
-position:absolute;top:22px;left:38px;width:48px;height:22px;
-border-radius:50%;background:#fff9;transform:rotate(-28deg);filter:blur(2px)
-}
+.shine{position:absolute;top:22px;left:38px;width:48px;height:22px;border-radius:50%;background:#fff9;transform:rotate(-28deg);filter:blur(2px)}
 .eyes{position:absolute;top:66px;left:0;right:0;display:flex;justify-content:center;gap:43px}
 .eye{width:18px;height:25px;background:#10213d;border-radius:50%;box-shadow:inset 4px 3px #fff}
-.mouth{
-position:absolute;top:108px;left:calc(50% - 9px);width:19px;height:11px;
-border-bottom:4px solid #173451;border-radius:50%
-}
-.crown{
-position:absolute;z-index:2;top:2px;left:50%;transform:translateX(-50%) rotate(-7deg);
-font-size:66px;filter:drop-shadow(0 5px 5px #0008)
-}
+.mouth{position:absolute;top:108px;left:calc(50% - 9px);width:19px;height:11px;border-bottom:4px solid #173451;border-radius:50%}
+.crown{position:absolute;z-index:2;top:2px;left:50%;transform:translateX(-50%) rotate(-7deg);font-size:66px;filter:drop-shadow(0 5px 5px #0008)}
 .orbit{position:absolute;inset:10px;pointer-events:none;animation:orbit 9s linear infinite}
 .petfloat{position:absolute;font-size:31px;filter:drop-shadow(0 0 8px #fff9)}
 .petfloat:nth-child(1){top:15px;left:12%}
@@ -69,83 +38,26 @@ font-size:66px;filter:drop-shadow(0 5px 5px #0008)
 @keyframes orbit{to{transform:rotate(360deg)}}
 .hint{color:#b9c7e8;margin:0}
 .hint b{color:#9ceeff}
-.float{
-position:absolute;color:#ffe58c;font-weight:900;font-size:22px;
-pointer-events:none;animation:float .8s forwards;text-shadow:0 2px 8px #000
-}
+.float{position:absolute;color:#ffe58c;font-weight:900;font-size:22px;pointer-events:none;animation:float .8s forwards;text-shadow:0 2px 8px #000}
 @keyframes float{to{transform:translateY(-80px);opacity:0}}
 .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.tab{
-border:1px solid #3b4d7b;background:#0b1531;color:white;
-padding:8px 10px;border-radius:11px;cursor:pointer;font-weight:700
-}
+.tab{border:1px solid #3b4d7b;background:#0b1531;color:white;padding:8px 10px;border-radius:11px;cursor:pointer;font-weight:700}
 .tab.active{background:#24547a;border-color:#71ddff}
 h2{font-size:19px;margin:4px 0 10px}
-.item{
-display:flex;align-items:center;gap:9px;padding:10px;margin:8px 0;
-background:#0b1531;border:1px solid #2c3c68;border-radius:12px
-}
+.item{display:flex;align-items:center;gap:9px;padding:10px;margin:8px 0;background:#0b1531;border:1px solid #2c3c68;border-radius:12px}
 .emoji{font-size:27px}
 .desc{flex:1;min-width:0}
 .desc b{display:block}
 .desc small,.muted{color:#b9c7e8;font-size:12px}
-.action{
-border:0;border-radius:10px;background:linear-gradient(135deg,#61dafa,#3d92e7);
-color:#07152e;font-weight:900;padding:9px 11px;cursor:pointer
-}
-.portal{
-padding:13px;border-radius:14px;margin:9px 0;
-background:linear-gradient(120deg,#143e58,#24204f);border:1px solid #5a77b9
-}
+.action{border:0;border-radius:10px;background:linear-gradient(135deg,#61dafa,#3d92e7);color:#07152e;font-weight:900;padding:9px 11px;cursor:pointer}
+.portal{padding:13px;border-radius:14px;margin:9px 0;background:linear-gradient(120deg,#143e58,#24204f);border:1px solid #5a77b9}
 .portal h3{margin:0 0 5px}
 .portal p{color:#b9c7e8;font-size:13px;margin:0 0 9px}
 .petgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.petcard{
-background:#0b1531;border:1px solid #2c3c68;border-radius:12px;
-padding:10px;text-align:center
-}
+.petcard{background:#0b1531;border:1px solid #2c3c68;border-radius:12px;padding:10px;text-align:center}
 .petcard .big{font-size:30px}
 .petcard small{display:block;color:#b9c7e8}
 .notice{text-align:center;color:#aab8dc;font-size:12px;margin-top:12px}
-
-/* СКИНЫ */
-.slime.skin-blue{
-background:radial-gradient(ellipse at 32% 22%,#ffffffc9 0 5%,#b8f7ff99 18%,#55d7f2b8 52%,#1593c9d9 100%)
-}
-.slime.skin-pink{
-background:radial-gradient(ellipse at 32% 22%,#fff 0 5%,#ffd5f5 18%,#f58bd7 55%,#a832a7 100%)
-}
-.slime.skin-gold{
-background:radial-gradient(ellipse at 32% 22%,#fff8cf 0 5%,#fff0a0 18%,#ffc83d 55%,#a86a08 100%)
-}
-.slime.skin-galaxy{
-background:radial-gradient(ellipse at 32% 22%,#f5d9ff 0 5%,#b57bff 22%,#5427a8 58%,#171044 100%)
-}
-.slime.skin-bee{
-background:repeating-linear-gradient(135deg,#ffd83d 0 28px,#242424 28px 52px);
-border:3px solid #fff0a0;box-shadow:0 0 40px #ffcf3299
-}
-.slime.skin-blackhole{
-background:radial-gradient(ellipse at center,#05030c 0 28%,#25104f 42%,#8b4dff 54%,#15102e 70%);
-border:3px solid #a77bff;box-shadow:0 0 24px #a15cff,0 0 55px #4a1b9b
-}
-.slime.skin-hamster,.slime.skin-raccoon,.slime.skin-fox,.slime.skin-chess,.slime.skin-cone{
-background:transparent;border:0;box-shadow:none;display:grid;place-items:center
-}
-.slime.skin-hamster::after,.slime.skin-raccoon::after,.slime.skin-fox::after,.slime.skin-chess::after,.slime.skin-cone::after{
-font-size:132px;line-height:1;filter:drop-shadow(0 8px 10px #0008)
-}
-.slime.skin-hamster::after{content:'🐹'}
-.slime.skin-raccoon::after{content:'🦝'}
-.slime.skin-fox::after{content:'🦊'}
-.slime.skin-chess::after{content:'♟️'}
-.slime.skin-cone::after{content:'🚧'}
-.slime.skin-hamster .shine,.slime.skin-hamster .eyes,.slime.skin-hamster .mouth,
-.slime.skin-raccoon .shine,.slime.skin-raccoon .eyes,.slime.skin-raccoon .mouth,
-.slime.skin-fox .shine,.slime.skin-fox .eyes,.slime.skin-fox .mouth,
-.slime.skin-chess .shine,.slime.skin-chess .eyes,.slime.skin-chess .mouth,
-.slime.skin-cone .shine,.slime.skin-cone .eyes,.slime.skin-cone .mouth{display:none}
-
 @media(max-width:720px){
 .layout{grid-template-columns:1fr}
 .hero{min-height:350px}
@@ -155,8 +67,8 @@ font-size:132px;line-height:1;filter:drop-shadow(0 8px 10px #0008)
 }
 </style>
 </head>
-
 <body>
+
 <header>
 <h1>🍞 ПЕЧЕГОР КЛИКЕР 02</h1>
 <p>Космическая слизь собирает печеогароки!</p>
@@ -173,24 +85,26 @@ font-size:132px;line-height:1;filter:drop-shadow(0 8px 10px #0008)
 <section class="panel hero">
 <div class="rank" id="rank">КОСМИЧЕСКИЙ НОВИЧОК</div>
 <div class="orbit" id="orbit"></div>
+
 <button class="tap" id="tap" aria-label="Нажать на слизь">
 <div class="crown">👑</div>
-<div class="slime skin-blue" id="slime">
+<div class="slime" id="slime">
 <div class="shine"></div>
 <div class="eyes"><i class="eye"></i><i class="eye"></i></div>
 <div class="mouth"></div>
 </div>
 </button>
+
 <p class="hint">Нажимай на слизь! <b id="perTap">+1 🍞</b></p>
 <p class="notice">Телефон: касайся · ПК: мышь или пробел</p>
 </section>
 
 <section class="panel">
-<nav class="tabs" id="tabs">
-<button type="button" class="tab active" data-tab="shop">🛒 Магазин</button>
-<button type="button" class="tab" data-tab="portals">🌀 Порталы</button>
-<button type="button" class="tab" data-tab="pets">🐾 Питомцы</button>
-<button type="button" class="tab" data-tab="skins">🎨 Скины</button>
+<nav class="tabs">
+<button class="tab active" data-tab="shop">🛒 Магазин</button>
+<button class="tab" data-tab="portals">🌀 Порталы</button>
+<button class="tab" data-tab="pets">🐾 Питомцы</button>
+<button class="tab" data-tab="skins">🎨 Скины</button>
 </nav>
 <div id="content"></div>
 </section>
@@ -209,17 +123,7 @@ saved=JSON.parse(localStorage.getItem('pechegor-save')||'{}')||{};
 }catch(e){}
 
 let s={...defaults,...saved};
-
 if(!Array.isArray(s.owned))s.owned=[];
-if(!Number.isFinite(s.skin)||s.skin<0||s.skin>10)s.skin=0;
-if(!Number.isFinite(s.coins)||s.coins<0)s.coins=0;
-if(!Number.isFinite(s.energy)||s.energy<0)s.energy=100;
-if(!Number.isFinite(s.maxEnergy)||s.maxEnergy<1)s.maxEnergy=100;
-if(!Number.isFinite(s.tapPower)||s.tapPower<1)s.tapPower=1;
-if(!Number.isFinite(s.auto)||s.auto<0)s.auto=0;
-if(!Number.isFinite(s.level)||s.level<1)s.level=1;
-if(!Number.isFinite(s.upgrades)||s.upgrades<0)s.upgrades=0;
-
 let tab='shop';
 
 const pets=[
@@ -231,20 +135,12 @@ const pets=[
 ];
 
 const skins=[
-{name:'Голубая слизь',emoji:'🩵',className:'blue'},
-{name:'Розовая слизь',emoji:'🩷',className:'pink'},
-{name:'Золотая слизь',emoji:'💛',className:'gold'},
-{name:'Галактическая слизь',emoji:'💜',className:'galaxy'},
-{name:'Пчелиная раскраска',emoji:'🐝',className:'bee'},
-{name:'Чёрная дыра',emoji:'🕳️',className:'blackhole'},
-{name:'Хомяк',emoji:'🐹',className:'hamster'},
-{name:'Енот',emoji:'🦝',className:'raccoon'},
-{name:'Лиса',emoji:'🦊',className:'fox'},
-{name:'Шахматы',emoji:'♟️',className:'chess'},
-{name:'Конус',emoji:'🚧',className:'cone'}
+['Голубая слизь','🩵'],
+['Розовая слизь','🩷'],
+['Золотая слизь','💛'],
+['Галактическая слизь','💜']
 ];
 
-const $=id=>document.getElementById(id);
 const fmt=n=>Math.floor(n).toLocaleString('ru-RU');
 
 function save(){
@@ -253,90 +149,69 @@ localStorage.setItem('pechegor-save',JSON.stringify(s));
 }catch(e){}
 }
 
-function validOwned(){
-return s.owned.filter(id=>pets.some(p=>p.id===id));
-}
-
 function mult(){
-return 1+validOwned().reduce((a,id)=>{
-const p=pets.find(x=>x.id===id);
-return a+(p?p.mult:0)*.15;
-},0);
+return 1+s.owned
+.filter(id=>pets.some(p=>p.id===id))
+.reduce((a,id)=>a+(pets.find(p=>p.id===id)?.mult||0)*.15,0);
 }
 
-/* ОБНОВЛЕНИЕ ИГРЫ */
 function update(){
-$('coins').textContent=fmt(s.coins);
-$('energy').textContent=`${Math.floor(s.energy)} / ${s.maxEnergy}`;
-$('level').textContent=s.level;
-$('perTap').textContent=`+${fmt(s.tapPower*mult())} 🍞`;
+document.getElementById('coins').textContent=fmt(s.coins);
+document.getElementById('energy').textContent=`${Math.floor(s.energy)} / ${s.maxEnergy}`;
+document.getElementById('level').textContent=s.level;
+document.getElementById('perTap').textContent=`+${fmt(s.tapPower*mult())} 🍞`;
 
-$('rank').textContent=
+document.getElementById('rank').textContent=
 s.level<5?'КОСМИЧЕСКИЙ НОВИЧОК':
 s.level<12?'ПОВЕЛИТЕЛЬ ПЕЧЕОГАРОКОВ':
 'КОСМИЧЕСКИЙ КОРОЛЬ';
 
-$('orbit').innerHTML=validOwned().slice(0,3).map(id=>{
-const p=pets.find(x=>x.id===id);
-return `<span class="petfloat">${p.emoji}</span>`;
-}).join('');
+document.getElementById('orbit').innerHTML=
+s.owned.slice(0,3).map(id=>
+`<span class="petfloat">${pets.find(p=>p.id===id)?.emoji||'⭐'}</span>`
+).join('');
 
-document.querySelectorAll('.tab').forEach(b=>{
-b.classList.toggle('active',b.dataset.tab===tab);
-});
-
-$('slime').className='slime skin-'+(skins[s.skin]?.className||'blue');
+document.querySelectorAll('.tab').forEach(b=>
+b.classList.toggle('active',b.dataset.tab===tab)
+);
 
 render();
 }
 
-/* НАЖАТИЕ НА СЛИЗЬ */
 function gain(){
 if(s.energy<1)return;
 
 s.energy--;
-const n=s.tapPower*mult();
+let n=s.tapPower*mult();
 s.coins+=n;
 s.level=Math.max(s.level,1+Math.floor(s.coins/100));
 
 update();
 save();
 
-const f=document.createElement('span');
+let f=document.createElement('span');
 f.className='float';
 f.textContent=`+${fmt(n)} 🍞`;
 f.style.left=(35+Math.random()*30)+'%';
 f.style.top='43%';
-$('tap').parentElement.append(f);
+
+document.querySelector('.hero').append(f);
 setTimeout(()=>f.remove(),850);
 }
 
-$('tap').addEventListener('pointerdown',e=>{
+document.getElementById('tap').addEventListener('pointerdown',e=>{
 e.preventDefault();
 gain();
 });
 
 document.addEventListener('keydown',e=>{
 if(e.code==='Space'&&!e.repeat&&
-!['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)){
+!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
 e.preventDefault();
 gain();
 }
 });
 
-/* ИСПРАВЛЕННОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК */
-$('tabs').addEventListener('click',e=>{
-const button=e.target.closest('.tab');
-if(!button)return;
-
-const newTab=button.dataset.tab;
-if(!['shop','portals','pets','skins'].includes(newTab))return;
-
-tab=newTab;
-update();
-});
-
-/* ВОССТАНОВЛЕНИЕ ЭНЕРГИИ И АВТОСБОР */
 setInterval(()=>{
 let changed=false;
 
@@ -357,105 +232,142 @@ save();
 }
 },1000);
 
+/* ИСПРАВЛЕННОЕ ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК */
+document.querySelector('.tabs').addEventListener('click',e=>{
+const b=e.target.closest('.tab');
+if(!b)return;
+
+tab=b.dataset.tab;
+update();
+});
+
 function buy(cost,fn){
 if(s.coins<cost){
 alert('Не хватает печеогароков!');
 return;
 }
+
 s.coins-=cost;
 fn();
 save();
 update();
 }
 
-/* ОТОБРАЖЕНИЕ ВКЛАДОК */
 function render(){
-const c=$('content');
+let c=document.getElementById('content');
 
 if(tab==='shop'){
-const tc=Math.floor(20*Math.pow(1.65,s.upgrades));
-const ac=Math.floor(100*Math.pow(1.8,s.auto));
+
+let tc=Math.floor(20*Math.pow(1.65,s.upgrades));
+let ac=Math.floor(100*Math.pow(1.8,s.auto));
 
 c.innerHTML=`
 <h2>Улучшения</h2>
+
 <div class="item">
 <span class="emoji">👆</span>
-<div class="desc"><b>Сильный тап</b><small>+1 печеогарок за нажатие</small></div>
+<div class="desc">
+<b>Сильный тап</b>
+<small>+1 печеогарок за нажатие</small>
+</div>
 <button class="action" id="bt">🍞 ${fmt(tc)}</button>
 </div>
+
 <div class="item">
 <span class="emoji">🤖</span>
-<div class="desc"><b>Автосборщик</b><small>+1 печеогарок в секунду</small></div>
+<div class="desc">
+<b>Автосборщик</b>
+<small>+1 печеогарок в секунду</small>
+</div>
 <button class="action" id="ba">🍞 ${fmt(ac)}</button>
 </div>
+
 <div class="item">
 <span class="emoji">⚡</span>
-<div class="desc"><b>Батарея</b><small>+25 к максимуму энергии</small></div>
+<div class="desc">
+<b>Батарея</b>
+<small>+25 к максимуму энергии</small>
+</div>
 <button class="action" id="be">🍞 150</button>
-</div>`;
+</div>
+`;
 
-$('bt').onclick=()=>buy(tc,()=>{
+document.getElementById('bt').onclick=()=>buy(tc,()=>{
 s.tapPower++;
 s.upgrades++;
 });
-$('ba').onclick=()=>buy(ac,()=>s.auto++);
-$('be').onclick=()=>buy(150,()=>{
+
+document.getElementById('ba').onclick=()=>buy(ac,()=>{
+s.auto++;
+});
+
+document.getElementById('be').onclick=()=>buy(150,()=>{
 s.maxEnergy+=25;
 s.energy=s.maxEnergy;
 });
 
 }else if(tab==='portals'){
+
 c.innerHTML=`
 <h2>Космические порталы</h2>
+
 <div class="portal">
 <h3>🟢 Зелёный портал</h3>
 <p>Обычные и редкие питомцы</p>
 <button class="action" id="p1">Открыть · 100 🍞</button>
 </div>
+
 <div class="portal">
 <h3>🟣 Фиолетовый портал</h3>
 <p>Редкие и эпические питомцы</p>
 <button class="action" id="p2">Открыть · 500 🍞</button>
 </div>
+
 <div class="portal">
 <h3>🟡 Золотой портал</h3>
 <p>Эпические, легендарные и секретные питомцы</p>
 <button class="action" id="p3">Открыть · 2 000 🍞</button>
 </div>
-<p class="notice">Повторный питомец превращается в 50 🍞.</p>`;
 
-$('p1').onclick=()=>portal(100,['star','star','star','moon']);
-$('p2').onclick=()=>portal(500,['moon','moon','alien','alien']);
-$('p3').onclick=()=>portal(2000,['alien','dragon','dragon','ghost']);
+<p class="notice">Повторный питомец превращается в 50 🍞.</p>
+`;
+
+document.getElementById('p1').onclick=()=>portal(100,['star','star','star','moon']);
+document.getElementById('p2').onclick=()=>portal(500,['moon','moon','alien','alien']);
+document.getElementById('p3').onclick=()=>portal(2000,['alien','dragon','dragon','ghost']);
 
 }else if(tab==='pets'){
-/* ЗАЩИТА ОТ НЕИЗВЕСТНЫХ ПИТОМЦЕВ */
-const ownedPets=validOwned();
+
+const ownedPets=s.owned.filter(id=>pets.some(p=>p.id===id));
 
 c.innerHTML=
-'<h2>Мои питомцы</h2>'+
-'<div class="petgrid">'+
-(ownedPets.length
+'<h2>Мои питомцы</h2><div class="petgrid">'+
+(
+ownedPets.length
 ?ownedPets.map(id=>{
 const p=pets.find(x=>x.id===id);
+
 return `
 <div class="petcard">
 <div class="big">${p.emoji}</div>
 <b>${p.name}</b>
 <small>${p.rarity} · бонус x${p.mult}</small>
-</div>`;
+</div>
+`;
 }).join('')
-:'<p class="muted">Пока питомцев нет. Загляни в порталы! 🌀</p>')+
+:'<p class="muted">Пока питомцев нет. Загляни в порталы! 🌀</p>'
+)+
 '</div>';
 
-}else if(tab==='skins'){
+}else{
+
 c.innerHTML=
 '<h2>Космические скины</h2>'+
 skins.map((sk,i)=>`
 <div class="item">
-<span class="emoji">${sk.emoji}</span>
+<span class="emoji">${sk[1]}</span>
 <div class="desc">
-<b>${sk.name}</b>
+<b>${sk[0]}</b>
 <small>${i===0?'Стандартный':'Новый облик слизи'}</small>
 </div>
 <button class="action" data-skin="${i}">
@@ -466,26 +378,25 @@ ${s.skin===i?'Выбран':i===0?'Выбрать':'1000 🍞'}
 
 c.querySelectorAll('[data-skin]').forEach(b=>{
 b.onclick=()=>{
-const i=Number(b.dataset.skin);
-if(s.skin===i)return;
+let i=+b.dataset.skin;
 
-if(i===0){
-s.skin=0;
-}else if(s.coins>=1000){
-s.coins-=1000;
+if(i===0||s.coins>=1000){
+if(i!==0&&s.skin!==i)s.coins-=1000;
+
 s.skin=i;
-}else{
-alert('Не хватает печеогароков!');
-return;
-}
+document.getElementById('slime').style.filter=
+['none','hue-rotate(100deg)','hue-rotate(220deg)','hue-rotate(260deg)'][i];
+
 save();
 update();
+}else{
+alert('Не хватает печеогароков!');
+}
 };
 });
 }
 }
 
-/* ОТКРЫТИЕ ПОРТАЛОВ */
 function portal(cost,pool){
 if(s.coins<cost){
 alert('Не хватает печеогароков!');
@@ -493,14 +404,9 @@ return;
 }
 
 s.coins-=cost;
-const id=pool[Math.floor(Math.random()*pool.length)];
-const p=pets.find(x=>x.id===id);
 
-if(!p){
-save();
-update();
-return;
-}
+let id=pool[Math.floor(Math.random()*pool.length)];
+let p=pets.find(x=>x.id===id);
 
 if(s.owned.includes(id)){
 s.coins+=50;
@@ -514,7 +420,6 @@ save();
 update();
 }
 
-/* ЗАПУСК */
 update();
 </script>
 </body>
