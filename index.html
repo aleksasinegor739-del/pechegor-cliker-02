@@ -234,14 +234,14 @@ c.innerHTML=`
 <div class="item">
 <span class="emoji">🔋</span>
 <div class="desc"><b>Пополнить энергию</b><small>Полностью восстанавливает энергию</small></div>
-<button class="action" id="refill" ${s.energy>=s.maxEnergy?'disabled':''}>🍞 100</button>
+<button class="action" id="refill" ${s.energy>=s.maxEnergy?'disabled':''}>🍞 5000</button>
 </div>`;
 $('bt').onclick=()=>buy(tc,()=>{s.tapPower++;s.upgrades++});
 $('ba').onclick=()=>buy(ac,()=>s.auto++);
 $('be').onclick=()=>buy(150,()=>{s.maxEnergy+=25;s.energy=s.maxEnergy});
 $('refill').onclick=()=>{
 if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}
-buy(100,()=>{s.energy=s.maxEnergy});
+buy(5000,()=>{s.energy=s.maxEnergy});
 };
 }else if(tab==='portals'){
 c.innerHTML=`
