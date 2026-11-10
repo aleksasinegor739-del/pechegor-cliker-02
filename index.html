@@ -7,72 +7,21 @@
 <title>ПЕЧЕГОР КЛИКЕР 02</title>
 <style>
 *{box-sizing:border-box}
-
-body{
-margin:0;
-color:#f5f7ff;
-font-family:system-ui,Arial;
-min-height:100vh;
-position:relative;
-isolation:isolate;
-overflow-x:hidden;
-background:
-linear-gradient(180deg,#08091f 0%,#101638 48%,#080b20 100%);
-}
-
-body:before{
-content:"";
-position:fixed;
-inset:0;
-pointer-events:none;
-z-index:-1;
-background-image:
-radial-gradient(2px 2px at 20px 30px,#fff 99%,transparent),
-radial-gradient(1px 1px at 80px 90px,#9ceeff 99%,transparent),
-radial-gradient(2px 2px at 150px 40px,#fff 99%,transparent),
-radial-gradient(1px 1px at 200px 130px,#c5a5ff 99%,transparent),
-radial-gradient(2px 2px at 250px 200px,#fff 99%,transparent),
-radial-gradient(1px 1px at 300px 70px,#9ceeff 99%,transparent);
-background-size:320px 260px;
-opacity:.65;
-animation:stars 55s linear infinite;
-}
-
-body:after{
-content:"";
-position:fixed;
-inset:-30%;
-pointer-events:none;
-z-index:-2;
-background:
-radial-gradient(ellipse at 15% 25%,#713cff55 0%,transparent 32%),
-radial-gradient(ellipse at 80% 20%,#087bff55 0%,transparent 30%),
-radial-gradient(ellipse at 55% 70%,#d02bff33 0%,transparent 35%),
-radial-gradient(ellipse at 20% 85%,#00d9ff33 0%,transparent 30%);
-filter:blur(35px);
-animation:nebula 18s ease-in-out infinite alternate;
-}
-
-@keyframes stars{
-from{background-position:0 0}
-to{background-position:320px 520px}
-}
-
-@keyframes nebula{
-0%{transform:translate(-2%,0) scale(1)}
-50%{transform:translate(2%,2%) scale(1.08)}
-100%{transform:translate(-1%,3%) scale(1.04)}
-}
-
+body{margin:0;color:#f5f7ff;font-family:system-ui,Arial;min-height:100vh;position:relative;isolation:isolate;overflow-x:hidden;background:linear-gradient(180deg,#08091f 0%,#101638 48%,#080b20 100%)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:radial-gradient(2px 2px at 20px 30px,#fff 99%,transparent),radial-gradient(1px 1px at 80px 90px,#9ceeff 99%,transparent),radial-gradient(2px 2px at 150px 40px,#fff 99%,transparent),radial-gradient(1px 1px at 200px 130px,#c5a5ff 99%,transparent),radial-gradient(2px 2px at 250px 200px,#fff 99%,transparent),radial-gradient(1px 1px at 300px 70px,#9ceeff 99%,transparent);background-size:320px 260px;opacity:.65;animation:stars 55s linear infinite}
+body:after{content:"";position:fixed;inset:-30%;pointer-events:none;z-index:-2;background:radial-gradient(ellipse at 15% 25%,#713cff55 0%,transparent 32%),radial-gradient(ellipse at 80% 20%,#087bff55 0%,transparent 30%),radial-gradient(ellipse at 55% 70%,#d02bff33 0%,transparent 35%),radial-gradient(ellipse at 20% 85%,#00d9ff33 0%,transparent 30%);filter:blur(35px);animation:nebula 18s ease-in-out infinite alternate}
+@keyframes stars{from{background-position:0 0}to{background-position:320px 520px}}
+@keyframes nebula{0%{transform:translate(-2%,0) scale(1)}50%{transform:translate(2%,2%) scale(1.08)}100%{transform:translate(-1%,3%) scale(1.04)}}
 header{text-align:center;padding:20px 10px 8px}
 h1{margin:0;color:#9ceeff;font-size:clamp(24px,5vw,40px);text-shadow:0 0 18px #36c9ff}
 header p{color:#b9c7e8;margin:5px}
 .wrap{width:min(1000px,94vw);margin:auto;position:relative}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:12px 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}
 .stat,.panel{background:#121d3bed;border:1px solid #3b4d7b;border-radius:17px;box-shadow:0 10px 30px #0004}
 .stat{text-align:center;padding:10px}
 .stat small{display:block;color:#b9c7e8;font-size:12px}
 .stat strong{font-size:clamp(17px,3vw,24px)}
+.online-number{color:#79ffad;text-shadow:0 0 12px #35ff8a}
 .layout{display:grid;grid-template-columns:1.1fr .9fr;gap:13px}
 .panel{padding:15px}
 .hero{text-align:center;min-height:390px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
@@ -107,6 +56,7 @@ h2{font-size:19px;margin:4px 0 10px}
 .desc b{display:block}
 .desc small,.muted{color:#b9c7e8;font-size:12px}
 .action{border:0;border-radius:10px;background:linear-gradient(135deg,#61dafa,#3d92e7);color:#07152e;font-weight:900;padding:9px 11px;cursor:pointer}
+.action:disabled{opacity:.5;cursor:not-allowed}
 .portal{padding:13px;border-radius:14px;margin:9px 0;background:linear-gradient(120deg,#143e58,#24204f);border:1px solid #5a77b9}
 .portal h3{margin:0 0 5px}
 .portal p{color:#b9c7e8;font-size:13px;margin:0 0 9px}
@@ -130,7 +80,7 @@ h2{font-size:19px;margin:4px 0 10px}
 .slime.skin-cone::after{content:'🚧'}
 .slime.skin-hamster::after,.slime.skin-raccoon::after,.slime.skin-fox::after,.slime.skin-chess::after,.slime.skin-cone::after{font-size:132px;line-height:1;filter:drop-shadow(0 8px 10px #0008)}
 .slime.skin-hamster .shine,.slime.skin-hamster .eyes,.slime.skin-hamster .mouth,.slime.skin-raccoon .shine,.slime.skin-raccoon .eyes,.slime.skin-raccoon .mouth,.slime.skin-fox .shine,.slime.skin-fox .eyes,.slime.skin-fox .mouth,.slime.skin-chess .shine,.slime.skin-chess .eyes,.slime.skin-chess .mouth,.slime.skin-cone .shine,.slime.skin-cone .eyes,.slime.skin-cone .mouth{display:none}
-@media(max-width:720px){.layout{grid-template-columns:1fr}.hero{min-height:350px}.panel{padding:12px}.stats{gap:6px}.stat{padding:8px 3px}}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.hero{min-height:350px}.panel{padding:12px}.stats{grid-template-columns:repeat(2,1fr);gap:6px}.stat{padding:8px 3px}}
 </style>
 </head>
 <body>
@@ -143,6 +93,7 @@ h2{font-size:19px;margin:4px 0 10px}
 <div class="stat"><small>🍞 Печеогароки</small><strong id="coins">0</strong></div>
 <div class="stat"><small>⚡ Энергия</small><strong id="energy">100 / 100</strong></div>
 <div class="stat"><small>⭐ Уровень</small><strong id="level">1</strong></div>
+<div class="stat"><small>👥 Онлайн</small><strong class="online-number" id="online">128</strong></div>
 </div>
 <div class="layout">
 <section class="panel hero">
@@ -188,6 +139,16 @@ if(!Number.isFinite(s.tapPower)||s.tapPower<1)s.tapPower=1;
 if(!Number.isFinite(s.auto)||s.auto<0)s.auto=0;
 if(!Number.isFinite(s.upgrades)||s.upgrades<0)s.upgrades=0;
 if(!Number.isInteger(s.skin)||s.skin<0||s.skin>8)s.skin=0;
+
+let onlineCount=128+Math.floor(Math.random()*90);
+$('online').textContent=onlineCount.toLocaleString('ru-RU');
+
+setInterval(()=>{
+onlineCount+=Math.floor(Math.random()*7)-3;
+onlineCount=Math.max(1,onlineCount);
+$('online').textContent=onlineCount.toLocaleString('ru-RU');
+},5000);
+
 let tab='shop';
 const pets=[
 {id:'star',name:'Звёздный малыш',emoji:'⭐',rarity:'Обычный',mult:1},
@@ -271,33 +232,14 @@ let tc=Math.floor(20*Math.pow(1.65,s.upgrades));
 let ac=Math.floor(100*Math.pow(1.8,s.auto));
 c.innerHTML=`
 <h2>Улучшения</h2>
-<div class="item">
-<span class="emoji">👆</span>
-<div class="desc"><b>Сильный тап</b><small>+1 печеогарок за нажатие</small></div>
-<button class="action" id="bt">🍞 ${fmt(tc)}</button>
-</div>
-<div class="item">
-<span class="emoji">🤖</span>
-<div class="desc"><b>Автосборщик</b><small>+1 печеогарок в секунду</small></div>
-<button class="action" id="ba">🍞 ${fmt(ac)}</button>
-</div>
-<div class="item">
-<span class="emoji">⚡</span>
-<div class="desc"><b>Батарея</b><small>+25 к максимуму энергии</small></div>
-<button class="action" id="be">🍞 150</button>
-</div>
-<div class="item">
-<span class="emoji">🔋</span>
-<div class="desc"><b>Пополнить энергию</b><small>Полностью восстанавливает энергию</small></div>
-<button class="action" id="refill" ${s.energy>=s.maxEnergy?'disabled':''}>🍞 5000</button>
-</div>`;
+<div class="item"><span class="emoji">👆</span><div class="desc"><b>Сильный тап</b><small>+1 печеогарок за нажатие</small></div><button class="action" id="bt">🍞 ${fmt(tc)}</button></div>
+<div class="item"><span class="emoji">🤖</span><div class="desc"><b>Автосборщик</b><small>+1 печеогарок в секунду</small></div><button class="action" id="ba">🍞 ${fmt(ac)}</button></div>
+<div class="item"><span class="emoji">⚡</span><div class="desc"><b>Батарея</b><small>+25 к максимуму энергии</small></div><button class="action" id="be">🍞 150</button></div>
+<div class="item"><span class="emoji">🔋</span><div class="desc"><b>Пополнить энергию</b><small>Полностью восстанавливает энергию</small></div><button class="action" id="refill" ${s.energy>=s.maxEnergy?'disabled':''}>🍞 5000</button></div>`;
 $('bt').onclick=()=>buy(tc,()=>{s.tapPower++;s.upgrades++});
 $('ba').onclick=()=>buy(ac,()=>s.auto++);
 $('be').onclick=()=>buy(150,()=>{s.maxEnergy+=25;s.energy=s.maxEnergy});
-$('refill').onclick=()=>{
-if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}
-buy(5000,()=>{s.energy=s.maxEnergy});
-};
+$('refill').onclick=()=>{if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}buy(5000,()=>{s.energy=s.maxEnergy})};
 }else if(tab==='portals'){
 c.innerHTML=`
 <h2>Космические порталы</h2>
