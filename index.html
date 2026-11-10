@@ -214,6 +214,18 @@ const pets=[
 {id:'dimension_pet',name:'Бог измерений',emoji:'🌌',rarity:'Божественный',mult:100}
 ];
 
+// 🎁 НАГРАДА ДЛЯ СТАРЫХ СОХРАНЕНИЙ:
+// Если последний босс уже побеждён, выдаём питомца автоматически.
+let retroactivePetAward=false;
+if(s.bossesDefeated.includes(9)&&!s.owned.includes('dimension_pet')){
+  s.owned.push('dimension_pet');
+  s.petLevels.dimension_pet=1;
+  retroactivePetAward=true;
+  try{
+    localStorage.setItem('pechegor-save',JSON.stringify(s));
+  }catch(e){}
+}
+
 const skins=[
 {name:'Голубая слизь',emoji:'🩵',className:'blue'},
 {name:'Розовая слизь',emoji:'🩷',className:'pink'},
@@ -247,7 +259,15 @@ const items=[
 const fmt=n=>Math.floor(n).toLocaleString('ru-RU');
 function save(){try{localStorage.setItem('pechegor-save',JSON.stringify(s))}catch(e){}}
 function petLevel(id){return Math.max(1,Math.min(5,Number(s.petLevels[id])||1))}
-function petMultiplier(){return s.equipped.reduce((a,id)=>{const p=pets.find(x=>x.id===id);return a+(p?.mult||0)*.15*petLevel(id)},0)}
+
+// Бог измерений даёт настоящий множитель x100 при экипировке.
+function petMultiplier(){
+return s.equipped.reduce((a,id)=>{
+const p=pets.find(x=>x.id===id);
+if(!p)return a;
+return a+(id==='dimension_pet'?99:(p.mult||0)*.15*petLevel(id));
+},0);
+}
 function equippedItems(){return s.itemsEquipped.map(id=>items.find(x=>x.id===id)).filter(Boolean)}
 function itemTapBonus(){return equippedItems().reduce((a,x)=>a+x.tap,0)}
 function itemAutoBonus(){return equippedItems().reduce((a,x)=>a+x.auto,0)}
@@ -342,6 +362,7 @@ if(s.currentWorld===9){
 const petId='dimension_pet';
 if(!s.owned.includes(petId)){
 s.owned.push(petId);
+s.petLevels[petId]=1;
 }
 alert(`🌌 НЕВЕРОЯТНАЯ ПОБЕДА!
 
@@ -351,6 +372,8 @@ alert(`🌌 НЕВЕРОЯТНАЯ ПОБЕДА!
 
 🌌 Бог измерений
 ⚡ Бонус: x100
+
+Зайди во вкладку «🐾 Питомцы» и нажми «Выбрать», чтобы экипировать его.
 
 🍞 Награда: ${fmt(w.reward)}`);
 }else{
@@ -480,6 +503,12 @@ if(s.owned.includes(id)){s.coins+=50;alert(`${p.emoji} ${p.name} уже есть
 else{s.owned.push(id);alert(`Новый питомец: ${p.emoji} ${p.name}!\nРедкость: ${p.rarity}`)}
 update();
 }
+
+// Показываем уведомление, если питомец выдан за старое сохранение.
+if(retroactivePetAward){
+alert('🎁 НАГРАДА ЗА ПРОЙДЕННОГО БОССА!\n\nТы уже победил Повелителя измерений!\n\nПолучен питомец 🌌 Бог измерений!\nБонус: x100!\n\nОткрой вкладку «🐾 Питомцы» и нажми «Выбрать».');
+}
+
 update();
 </script>
 </body>
