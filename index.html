@@ -22,7 +22,10 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 .eyes{position:absolute;top:60px;left:0;right:0;display:flex;justify-content:center;gap:40px}
 .eye{width:16px;height:22px;background:#10213d;border-radius:50%}
 .mouth{position:absolute;top:105px;left:calc(50% - 8px);width:16px;height:9px;border-bottom:3px solid #173451;border-radius:50%}
-.tap{border:0;background:none;padding:20px;cursor:pointer;touch-action:manipulation}
+.tap{
+border:0;background:none;padding:20px;cursor:pointer;
+touch-action:none;user-select:none;-webkit-user-select:none;
+}
 .tap:active .slime{transform:scale(.93)}
 .hint{color:#b9c7e8}
 .tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
@@ -104,11 +107,8 @@ rebirths:0,ownedSkins:[0]
 
 function loadGame(){
 let saved={};
-try{
-saved=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}')||{};
-}catch(e){
-console.warn('Ошибка чтения сохранения:',e);
-}
+try{saved=JSON.parse(localStorage.getItem(SAVE_KEY)||'{}')||{};}
+catch(e){console.warn('Ошибка чтения сохранения:',e);}
 const s={...defaults,...saved};
 for(const k of ['owned','equipped','itemsOwned','itemsEquipped','unlockedWorlds','bossesDefeated','ownedSkins']){
 if(!Array.isArray(s[k]))s[k]=defaults[k].slice();
@@ -240,7 +240,26 @@ s.level=Math.max(s.level,1+Math.floor(s.coins/100));
 update();
 }
 
-$('tap').addEventListener('click',gain);
+// Поддержка мыши и двух пальцев
+const tapButton = $('tap');
+let touchHandled = false;
+
+tapButton.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    touchHandled = true;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        gain();
+    }
+}, { passive: false });
+
+tapButton.addEventListener('click', function() {
+    if (touchHandled) {
+        touchHandled = false;
+        return;
+    }
+    gain();
+});
+
 document.addEventListener('keydown',e=>{
 if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)){
 e.preventDefault();gain();
