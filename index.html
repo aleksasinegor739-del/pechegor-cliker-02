@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -141,6 +142,8 @@ body[data-world="secret"]{background:linear-gradient(180deg,#071c25,#164d56 55%,
 <button class="tab" data-tab="skins">🎨 Скины</button>
 <button class="tab" data-tab="luck">🎡 Удача</button>
 <button class="tab" data-tab="inventory">🎒 Инвентарь</button>
+<button class="tab" data-tab="rebirth">♻️ Перерождение</button>
+<button class="tab" data-tab="index">📖 Индекс</button>
 </nav>
 <div id="content"></div>
 </section>
@@ -152,11 +155,13 @@ const defaults={
 coins:0,energy:100,maxEnergy:100,level:1,tapPower:1,auto:0,
 owned:[],skin:0,upgrades:0,batteryUpgrades:0,equipped:[],
 petLevels:{},itemsOwned:[],itemsEquipped:[],
-unlockedWorlds:[0],currentWorld:0,bossHP:{},bossesDefeated:[]
+unlockedWorlds:[0],currentWorld:0,bossHP:{},bossesDefeated:[],
+rebirths:0
 };
 let saved={};
 try{saved=JSON.parse(localStorage.getItem('pechegor-save')||'{}')||{}}catch(e){}
 let s={...defaults,...saved};
+
 s.owned=Array.isArray(s.owned)?s.owned:[];
 s.equipped=Array.isArray(s.equipped)?s.equipped.filter(id=>s.owned.includes(id)).slice(0,5):[];
 s.petLevels=s.petLevels&&typeof s.petLevels==='object'?s.petLevels:{};
@@ -177,6 +182,7 @@ if(!Number.isFinite(s.auto)||s.auto<0)s.auto=0;
 if(!Number.isFinite(s.upgrades)||s.upgrades<0)s.upgrades=0;
 if(!Number.isInteger(s.skin)||s.skin<0||s.skin>8)s.skin=0;
 if(!Number.isInteger(s.batteryUpgrades)||s.batteryUpgrades<0)s.batteryUpgrades=0;
+if(!Number.isInteger(s.rebirths)||s.rebirths<0)s.rebirths=0;
 let tab='shop';
 
 const worlds=[
@@ -214,16 +220,11 @@ const pets=[
 {id:'dimension_pet',name:'Бог измерений',emoji:'🌌',rarity:'Божественный',mult:100}
 ];
 
-// 🎁 НАГРАДА ДЛЯ СТАРЫХ СОХРАНЕНИЙ:
-// Если последний босс уже побеждён, выдаём питомца автоматически.
 let retroactivePetAward=false;
 if(s.bossesDefeated.includes(9)&&!s.owned.includes('dimension_pet')){
-  s.owned.push('dimension_pet');
-  s.petLevels.dimension_pet=1;
-  retroactivePetAward=true;
-  try{
-    localStorage.setItem('pechegor-save',JSON.stringify(s));
-  }catch(e){}
+s.owned.push('dimension_pet');
+s.petLevels.dimension_pet=1;
+retroactivePetAward=true;
 }
 
 const skins=[
@@ -260,7 +261,6 @@ const fmt=n=>Math.floor(n).toLocaleString('ru-RU');
 function save(){try{localStorage.setItem('pechegor-save',JSON.stringify(s))}catch(e){}}
 function petLevel(id){return Math.max(1,Math.min(5,Number(s.petLevels[id])||1))}
 
-// Бог измерений даёт настоящий множитель x100 при экипировке.
 function petMultiplier(){
 return s.equipped.reduce((a,id)=>{
 const p=pets.find(x=>x.id===id);
@@ -271,7 +271,7 @@ return a+(id==='dimension_pet'?99:(p.mult||0)*.15*petLevel(id));
 function equippedItems(){return s.itemsEquipped.map(id=>items.find(x=>x.id===id)).filter(Boolean)}
 function itemTapBonus(){return equippedItems().reduce((a,x)=>a+x.tap,0)}
 function itemAutoBonus(){return equippedItems().reduce((a,x)=>a+x.auto,0)}
-function multiplier(){return 1+petMultiplier()+itemTapBonus()}
+function multiplier(){return 1+s.rebirths+petMultiplier()+itemTapBonus()}
 function autoIncome(){return s.auto+itemAutoBonus()}
 function currentWorld(){return worlds[s.currentWorld]}
 
@@ -283,42 +283,77 @@ $('perTap').textContent=`+${fmt(s.tapPower*multiplier())} 🍞`;
 $('rank').textContent=s.level<5?'КОСМИЧЕСКИЙ НОВИЧОК':s.level<12?'ПОВЕЛИТЕЛЬ ПЕЧЕОГАРОКОВ':'КОСМИЧЕСКИЙ КОРОЛЬ';
 $('slime').className='slime skin-'+(skins[s.skin]?.className||'blue');
 $('orbit').innerHTML=s.equipped.slice(0,5).map(id=>`<span class="petfloat">${pets.find(p=>p.id===id)?.emoji||'⭐'}</span>`).join('');
-$('bonusText').textContent=`Бонус предметов: +${Math.round(itemTapBonus()*100)}% к клику · +${fmt(itemAutoBonus())}/сек`;
+$('bonusText').textContent=`Бонус предметов: +${Math.round(itemTapBonus()*100)}% к клику · +${fmt(itemAutoBonus())}/сек · Перерождения: +${s.rebirths*100}%`;
 $('worldLabel').textContent=currentWorld().icon+' '+currentWorld().name;
 document.body.dataset.world=currentWorld().id;
 document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
 render();save();
 }
+
 function gain(){
 if(s.energy<1)return;
 s.energy--;
 let n=s.tapPower*multiplier();
-s.coins+=n;s.level=Math.max(s.level,1+Math.floor(s.coins/100));
+s.coins+=n;
+s.level=Math.max(s.level,1+Math.floor(s.coins/100));
 update();
-let f=document.createElement('span');f.className='float';f.textContent=`+${fmt(n)} 🍞`;
-f.style.left=(35+Math.random()*30)+'%';f.style.top='43%';
-document.querySelector('.hero').append(f);setTimeout(()=>f.remove(),850);
+let f=document.createElement('span');
+f.className='float';
+f.textContent=`+${fmt(n)} 🍞`;
+f.style.left=(35+Math.random()*30)+'%';
+f.style.top='43%';
+document.querySelector('.hero').append(f);
+setTimeout(()=>f.remove(),850);
 }
-const tapButton=$('tap');let lastTouchTime=0;
-tapButton.addEventListener('touchstart',e=>{e.preventDefault();lastTouchTime=Date.now();for(const touch of e.changedTouches)gain()},{passive:false});
-tapButton.addEventListener('click',e=>{e.preventDefault();if(Date.now()-lastTouchTime>700)gain()});
-document.addEventListener('keydown',e=>{if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();gain()}});
+
+const tapButton=$('tap');
+let lastTouchTime=0;
+tapButton.addEventListener('touchstart',e=>{
+e.preventDefault();
+lastTouchTime=Date.now();
+for(const touch of e.changedTouches)gain();
+},{passive:false});
+tapButton.addEventListener('click',e=>{
+e.preventDefault();
+if(Date.now()-lastTouchTime>700)gain();
+});
+document.addEventListener('keydown',e=>{
+if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+e.preventDefault();gain();
+}
+});
+
 setInterval(()=>{
 let changed=false;
 if(s.energy<s.maxEnergy){s.energy=Math.min(s.maxEnergy,s.energy+1);changed=true}
-if(autoIncome()>0){s.coins+=autoIncome();s.level=Math.max(s.level,1+Math.floor(s.coins/100));changed=true}
+if(autoIncome()>0){
+s.coins+=autoIncome();
+s.level=Math.max(s.level,1+Math.floor(s.coins/100));
+changed=true;
+}
 if(changed)update();
 },1000);
-document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;update()}));
-function buy(cost,fn){if(s.coins<cost){alert('Не хватает печеогароков!');return} s.coins-=cost;fn();update()}
+
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+tab=b.dataset.tab;
+update();
+}));
+
+function buy(cost,fn){
+if(s.coins<cost){alert('Не хватает печеогароков!');return}
+s.coins-=cost;
+fn();
+update();
+}
 
 function render(){
 let c=$('content');
+
 if(tab==='worlds'){
 const w=currentWorld(),hp=s.bossHP[s.currentWorld]??w.hp;
 const defeated=s.bossesDefeated.includes(s.currentWorld);
 c.innerHTML=`<h2>🌍 Карта миров</h2>
-<p class="muted">Исследуй миры по порядку. Чтобы открыть следующий мир, победи босса текущего мира и заплати стоимость открытия.</p>
+<p class="muted">Исследуй миры по порядку. Чтобы открыть следующий мир, победи босса текущего мира.</p>
 <div class="portal"><h3>Сейчас ты в мире: ${w.icon} ${w.name}</h3><p>${w.desc}</p><p>Местный питомец: ${w.pet}</p></div>
 ${worlds.map((x,i)=>{
 let unlocked=s.unlockedWorlds.includes(i),active=s.currentWorld===i,done=s.bossesDefeated.includes(i);
@@ -341,18 +376,27 @@ ${done?'<span class="rarity legendary">Босс побеждён</span>':''}
 <button class="action" id="attackBoss" ${defeated?'disabled':''}>⚔️ Атаковать босса</button>
 ${defeated?'<p class="notice">Награда за победу уже получена.</p>':''}
 </div>`;
-c.querySelectorAll('[data-enter]').forEach(b=>b.onclick=()=>{s.currentWorld=Number(b.dataset.enter);update()});
+
+c.querySelectorAll('[data-enter]').forEach(b=>b.onclick=()=>{
+s.currentWorld=Number(b.dataset.enter);
+update();
+});
 c.querySelectorAll('[data-unlock]').forEach(b=>b.onclick=()=>{
 let i=Number(b.dataset.unlock),world=worlds[i];
 if(!s.bossesDefeated.includes(i-1)){alert('Сначала победи босса предыдущего мира!');return}
 if(s.coins<world.cost){alert('Не хватает печеогароков!');return}
-s.coins-=world.cost;s.unlockedWorlds.push(i);s.currentWorld=i;update();
+s.coins-=world.cost;
+s.unlockedWorlds.push(i);
+s.currentWorld=i;
+update();
 });
+
 const attack=$('attackBoss');
 if(attack)attack.onclick=()=>{
 if(s.bossesDefeated.includes(s.currentWorld))return;
 let damage=Math.max(1,s.tapPower*multiplier()*10);
 s.bossHP[s.currentWorld]=Math.max(0,hp-damage);
+
 if(s.bossHP[s.currentWorld]<=0){
 s.bossesDefeated.push(s.currentWorld);
 s.coins+=w.reward;
@@ -382,7 +426,6 @@ alert(`🏆 ПОБЕДА!
 Награда: ${fmt(w.reward)} 🍞`);
 }
 
-// Победа над боссом открывает следующий мир бесплатно.
 if(s.currentWorld<worlds.length-1&&!s.unlockedWorlds.includes(s.currentWorld+1)){
 s.unlockedWorlds.push(s.currentWorld+1);
 }
@@ -392,6 +435,7 @@ $('content').querySelector('.boss-health span').style.width=(s.bossHP[s.currentW
 update();
 };
 }
+
 else if(tab==='shop'){
 let tc=Math.floor(20*Math.pow(1.65,s.upgrades));
 let ac=Math.floor(100*Math.pow(1.8,s.auto));
@@ -404,8 +448,12 @@ c.innerHTML=`<h2>Улучшения</h2>
 $('bt').onclick=()=>buy(tc,()=>{s.tapPower++;s.upgrades++});
 $('ba').onclick=()=>buy(ac,()=>s.auto++);
 $('be').onclick=()=>buy(batteryCost,()=>{s.maxEnergy+=25;s.energy=s.maxEnergy;s.batteryUpgrades++});
-$('refill').onclick=()=>{if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}buy(5000,()=>s.energy=s.maxEnergy)};
+$('refill').onclick=()=>{
+if(s.energy>=s.maxEnergy){alert('Энергия уже полная!');return}
+buy(5000,()=>s.energy=s.maxEnergy);
+};
 }
+
 else if(tab==='portals'){
 c.innerHTML=`<h2>Космические порталы</h2>
 <div class="portal"><h3>🟢 Зелёный портал</h3><p>Обычные и редкие питомцы</p><button class="action" id="p1">Открыть · 100 🍞</button></div>
@@ -416,6 +464,7 @@ $('p1').onclick=()=>portal(100,['star','star','robot','bear','moon','fox','shark
 $('p2').onclick=()=>portal(500,['moon','fox','octopus','alien','unicorn','diamond','shark']);
 $('p3').onclick=()=>portal(2000,['alien','dragon','ghost','phoenix','diamond','crown','planet','comet','nebula','blackhole']);
 }
+
 else if(tab==='pets'){
 const owned=s.owned.filter(id=>pets.some(p=>p.id===id));
 c.innerHTML=`<h2>Мои питомцы</h2><p class="notice">Выбери до 5 питомцев — они будут летать вокруг слизи и усиливать тап.</p><p>На орбите: <b>${s.equipped.length}/5</b></p><div class="petgrid">`+
@@ -423,6 +472,7 @@ c.innerHTML=`<h2>Мои питомцы</h2><p class="notice">Выбери до 5
 let p=pets.find(x=>x.id===id),lv=petLevel(id),cost=lv*500,active=s.equipped.includes(id);
 return `<div class="petcard"><div class="big">${p.emoji}</div><b>${p.name}</b><small>${p.rarity} · бонус x${p.mult} · уровень ${lv}/5</small><button class="action" data-equip="${id}" style="margin:7px 2px 3px">${active?'Снять':'Выбрать'}</button><button class="action" data-upgrade="${id}" style="margin:3px 2px">${lv>=5?'Максимум':'Улучшить · '+fmt(cost)+' 🍞'}</button></div>`;
 }).join(''):'<p class="muted">Пока питомцев нет. Загляни в порталы! 🌀</p>')+'</div>';
+
 c.querySelectorAll('[data-equip]').forEach(b=>b.onclick=()=>{
 let id=b.dataset.equip;
 if(s.equipped.includes(id))s.equipped=s.equipped.filter(x=>x!==id);
@@ -434,9 +484,12 @@ c.querySelectorAll('[data-upgrade]').forEach(b=>b.onclick=()=>{
 let id=b.dataset.upgrade,lv=petLevel(id),cost=lv*500;
 if(lv>=5){alert('Максимальный уровень!');return}
 if(s.coins<cost){alert('Не хватает печеогароков!');return}
-s.coins-=cost;s.petLevels[id]=lv+1;update();
+s.coins-=cost;
+s.petLevels[id]=lv+1;
+update();
 });
 }
+
 else if(tab==='inventory'){
 const owned=items.filter(x=>s.itemsOwned.includes(x.id));
 const equipped=items.filter(x=>s.itemsEquipped.includes(x.id));
@@ -451,62 +504,205 @@ $('chest').onclick=openChest;
 c.querySelectorAll('[data-item]').forEach(b=>b.onclick=()=>{
 const id=b.dataset.item;
 if(s.itemsEquipped.includes(id))s.itemsEquipped=s.itemsEquipped.filter(x=>x!==id);
-else{if(s.itemsEquipped.length>=8){alert('Можно надеть максимум 8 предметов!');return}s.itemsEquipped.push(id)}
+else{
+if(s.itemsEquipped.length>=8){alert('Можно надеть максимум 8 предметов!');return}
+s.itemsEquipped.push(id);
+}
 update();
 });
 }
+
 else if(tab==='luck'){
 c.innerHTML=`<h2>🎡 Зал удачи</h2><div class="portal"><h3>Колесо космических призов</h3><p>Стоимость прокрутки: <b>2500 🍞</b>.</p><div style="font-size:56px;text-align:center;margin:18px">🎡</div><button class="action" id="spin">Крутить · 2500 🍞</button><p class="notice" id="luckResult">Выбери прокрутку! Удачи!</p></div>`;
 $('spin').onclick=()=>{
 if(s.coins<2500){$('luckResult').textContent='Не хватает печеогароков!';return}
 s.coins-=2500;
-const prizes=[{label:'10 000 🍞',coins:10000,weight:.5},{label:'5 000 🍞',coins:5000,weight:5},{label:'2 500 🍞',coins:2500,weight:10},{label:'1 000 🍞',coins:1000,weight:15},{label:'500 🍞',coins:500,weight:50},{label:'100 🍞',coins:100,weight:75}];
+const prizes=[
+{label:'10 000 🍞',coins:10000,weight:.5},
+{label:'5 000 🍞',coins:5000,weight:5},
+{label:'2 500 🍞',coins:2500,weight:10},
+{label:'1 000 🍞',coins:1000,weight:15},
+{label:'500 🍞',coins:500,weight:50},
+{label:'100 🍞',coins:100,weight:75}
+];
 const total=prizes.reduce((sum,p)=>sum+p.weight,0);
 let roll=Math.random()*total,prize=prizes[prizes.length-1];
 for(const item of prizes){roll-=item.weight;if(roll<0){prize=item;break}}
-s.coins+=prize.coins;s.level=Math.max(s.level,1+Math.floor(s.coins/100));
-update();const result=$('luckResult');if(result)result.textContent='🎉 Выпало: '+prize.label+'!';
+s.coins+=prize.coins;
+s.level=Math.max(s.level,1+Math.floor(s.coins/100));
+update();
+const result=$('luckResult');
+if(result)result.textContent='🎉 Выпало: '+prize.label+'!';
 };
 }
+
 else if(tab==='skins'){
 c.innerHTML=`<h2>🎨 Космические скины</h2><p class="notice">Каждый новый скин стоит 1000 🍞.</p>`+
 skins.map((sk,i)=>`<div class="item"><span class="emoji">${sk.emoji}</span><div class="desc"><b>${sk.name}</b><small>${i===0?'Стандартный':'Новый облик слизи'}</small></div><button class="action" data-skin="${i}">${s.skin===i?'Выбран':i===0?'Выбрать':'1000 🍞'}</button></div>`).join('');
 c.querySelectorAll('[data-skin]').forEach(b=>b.onclick=()=>{
-let i=Number(b.dataset.skin);if(s.skin===i)return;
+let i=Number(b.dataset.skin);
+if(s.skin===i)return;
 if(i===0)s.skin=0;
 else if(s.coins>=1000){s.coins-=1000;s.skin=i}
 else{alert('Не хватает печеогароков!');return}
 update();
 });
 }
+
+/* ♻️ ПЕРЕРОЖДЕНИЕ */
+else if(tab==='rebirth'){
+const cost=5000000;
+c.innerHTML=`
+<h2>♻️ Перерождение</h2>
+<div class="portal">
+<h3>🌟 Начни новое путешествие!</h3>
+<p>Перерождение сбрасывает обычный прогресс, но сохраняет твою коллекцию и достижения.</p>
+<p>Стоимость: <b>5 000 000 🍞</b></p>
+<p>Перерождений: <b>${s.rebirths}</b></p>
+<p>Постоянный бонус: <b>+${s.rebirths*100}% к силе клика</b></p>
+<p>Множитель от перерождений: <b>x${1+s.rebirths}</b></p>
+<button class="action" id="doRebirth" ${s.coins<cost?'disabled':''}>
+♻️ Переродиться · 5 000 000 🍞
+</button>
+</div>
+<h3>Что сохранится?</h3>
+<p class="muted">🐾 Все питомцы и их уровни</p>
+<p class="muted">🎒 Все предметы и экипировка</p>
+<p class="muted">🌍 Открытые миры и побеждённые боссы</p>
+<p class="muted">🎨 Все купленные скины</p>
+<h3>Что сбросится?</h3>
+<p class="muted">🍞 Печеогароки, уровень, сила обычного клика и автосборщик</p>
+<p class="muted">⚡ Максимум энергии и улучшения батареи</p>
+`;
+$('doRebirth').onclick=()=>{
+if(s.coins<cost){
+alert('Не хватает печеогароков! Нужно 5 000 000 🍞.');
+return;
+}
+if(!confirm('Переродиться? Обычный прогресс будет сброшен, но коллекция сохранится.'))return;
+
+s.coins=0;
+s.energy=100;
+s.maxEnergy=100;
+s.level=1;
+s.tapPower=1;
+s.auto=0;
+s.upgrades=0;
+s.batteryUpgrades=0;
+s.rebirths++;
+
+update();
+alert(`♻️ ПЕРЕРОЖДЕНИЕ №${s.rebirths}!
+
+Постоянный бонус к силе клика: +${s.rebirths*100}%
+
+Множитель от перерождений: x${1+s.rebirths}
+
+Твоя коллекция и достижения сохранены!`);
+};
+}
+
+/* 📖 ИНДЕКС ПИТОМЦЕВ */
+else if(tab==='index'){
+const found=pets.filter(p=>s.owned.includes(p.id)).length;
+const percent=Math.floor(found/pets.length*100);
+
+c.innerHTML=`
+<h2>📖 Индекс питомцев</h2>
+<div class="portal">
+<h3>🐾 Коллекция</h3>
+<p>Найдено питомцев: <b>${found}/${pets.length}</b></p>
+<p>Заполнено: <b>${percent}%</b></p>
+<div class="progress"><span style="width:${percent}%"></span></div>
+</div>
+<div class="petgrid">
+${pets.map(p=>{
+const has=s.owned.includes(p.id);
+const active=s.equipped.includes(p.id);
+return `
+<div class="petcard">
+<div class="big">${has?p.emoji:'❔'}</div>
+<b>${has?p.name:'Неизвестный питомец'}</b>
+<small>${has?p.rarity:'???'}</small>
+<small>${has?'Бонус: x'+p.mult:'Пока не найден'}</small>
+${has&&active?'<span class="rarity legendary">На орбите</span>':''}
+</div>`;
+}).join('')}
+</div>
+`;
+}
 }
 
 function openChest(){
 if(s.coins<1500){alert('Не хватает печеогароков! Нужно 1500 🍞.');return}
 s.coins-=1500;
-const pool=[{rarity:'epic',weight:40},{rarity:'legendary',weight:25},{rarity:'mythic',weight:15},{rarity:'secret',weight:8},{rarity:'relic',weight:5},{rarity:'artifact',weight:3},{rarity:'amulet',weight:2.5},{rarity:'ring',weight:1.5}];
-const total=pool.reduce((a,x)=>a+x.weight,0);let roll=Math.random()*total,chosen=pool[0];
+const pool=[
+{rarity:'epic',weight:40},
+{rarity:'legendary',weight:25},
+{rarity:'mythic',weight:15},
+{rarity:'secret',weight:8},
+{rarity:'relic',weight:5},
+{rarity:'artifact',weight:3},
+{rarity:'amulet',weight:2.5},
+{rarity:'ring',weight:1.5}
+];
+const total=pool.reduce((a,x)=>a+x.weight,0);
+let roll=Math.random()*total,chosen=pool[0];
 for(const x of pool){roll-=x.weight;if(roll<0){chosen=x;break}}
-const map={epic:'Эпический предмет',legendary:'Легендарный предмет',mythic:'Мифический предмет',secret:'Секретный предмет',relic:'Реликвия',artifact:'Артефакт',amulet:'Амулет',ring:'Магическое кольцо'};
+const map={
+epic:'Эпический предмет',
+legendary:'Легендарный предмет',
+mythic:'Мифический предмет',
+secret:'Секретный предмет',
+relic:'Реликвия',
+artifact:'Артефакт',
+amulet:'Амулет',
+ring:'Магическое кольцо'
+};
 const categoryItems=items.filter(x=>x.category===map[chosen.rarity]);
 const prize=categoryItems[Math.floor(Math.random()*categoryItems.length)];
-if(s.itemsOwned.includes(prize.id)){s.coins+=100;alert(`📦 Дубликат!\n${prize.icon} ${prize.name}\nТы получил 100 🍞.`)}
-else{s.itemsOwned.push(prize.id);alert(`🎉 НОВЫЙ ПРЕДМЕТ!\n\n${prize.icon} ${prize.name}\n${prize.rarity}\n${prize.desc}`)}
-update();
+if(s.itemsOwned.includes(prize.id)){
+s.coins+=100;
+alert(`📦 Дубликат!
+${prize.icon} ${prize.name}
+Ты получил 100 🍞.`);
+}else{
+s.itemsOwned.push(prize.id);
+alert(`🎉 НОВЫЙ ПРЕДМЕТ!
+
+${prize.icon} ${prize.name}
+${prize.rarity}
+${prize.desc}`);
 }
-function portal(cost,pool){
-if(s.coins<cost){alert('Не хватает печеогароков!');return}
-s.coins-=cost;
-let id=pool[Math.floor(Math.random()*pool.length)],p=pets.find(x=>x.id===id);
-if(!p){update();return}
-if(s.owned.includes(id)){s.coins+=50;alert(`${p.emoji} ${p.name} уже есть! +50 🍞`)}
-else{s.owned.push(id);alert(`Новый питомец: ${p.emoji} ${p.name}!\nРедкость: ${p.rarity}`)}
 update();
 }
 
-// Показываем уведомление, если питомец выдан за старое сохранение.
+function portal(cost,pool){
+if(s.coins<cost){alert('Не хватает печеогароков!');return}
+s.coins-=cost;
+let id=pool[Math.floor(Math.random()*pool.length)];
+let p=pets.find(x=>x.id===id);
+if(!p){update();return}
+if(s.owned.includes(id)){
+s.coins+=50;
+alert(`${p.emoji} ${p.name} уже есть! +50 🍞`);
+}else{
+s.owned.push(id);
+alert(`Новый питомец: ${p.emoji} ${p.name}!
+Редкость: ${p.rarity}`);
+}
+update();
+}
+
 if(retroactivePetAward){
-alert('🎁 НАГРАДА ЗА ПРОЙДЕННОГО БОССА!\n\nТы уже победил Повелителя измерений!\n\nПолучен питомец 🌌 Бог измерений!\nБонус: x100!\n\nОткрой вкладку «🐾 Питомцы» и нажми «Выбрать».');
+alert('🎁 НАГРАДА ЗА ПРОЙДЕННОГО БОССА!
+
+Ты уже победил Повелителя измерений!
+
+Получен питомец 🌌 Бог измерений!
+Бонус: x100!
+
+Открой вкладку «🐾 Питомцы» и нажми «Выбрать».');
 }
 
 update();
