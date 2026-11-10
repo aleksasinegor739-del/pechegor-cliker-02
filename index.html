@@ -178,7 +178,7 @@ function update(){
 coins.textContent=fmt(s.coins);
 energy.textContent=`${Math.floor(s.energy)} / ${s.maxEnergy}`;
 level.textContent=s.level;
-perTap.textContent=`+${fmt(s.tapPower*mult())} 🍞`;
+perTap.textContent=`+${fmt(Math.min(250,s.tapPower*mult()))} 🍞`;
 
 rank.textContent=s.level<5?'КОСМИЧЕСКИЙ НОВИЧОК':s.level<12?'ПОВЕЛИТЕЛЬ ПЕЧЕОГАРОКОВ':'КОСМИЧЕСКИЙ КОРОЛЬ';
 
@@ -196,7 +196,7 @@ render();
 function gain(){
 if(s.energy<1)return;
 s.energy--;
-let n=s.tapPower*mult();
+let n=Math.min(250,s.tapPower*mult());
 s.coins+=n;
 s.level=Math.max(s.level,1+Math.floor(s.coins/100));
 update();
@@ -278,6 +278,11 @@ c.innerHTML=`
 <span class="emoji">⚡</span>
 <div class="desc"><b>Батарея</b><small>+25 к максимуму энергии</small></div>
 <button class="action" id="be">🍞 150</button>
+</div>
+<div class="item">
+<span class="emoji">🔋</span>
+<div class="desc"><b>Восстановить энергию</b><small>Полностью восполняет энергию</small></div>
+<button class="action" id="br">🍞 2000</button>
 </div>`;
 
 document.getElementById('bt').onclick=()=>buy(tc,()=>{
@@ -287,6 +292,15 @@ document.getElementById('ba').onclick=()=>buy(ac,()=>s.auto++);
 document.getElementById('be').onclick=()=>buy(150,()=>{
 s.maxEnergy+=25;s.energy=s.maxEnergy;
 });
+document.getElementById('br').onclick=()=>{
+if(s.energy>=s.maxEnergy){
+alert('Энергия уже полностью восстановлена!');
+return;
+}
+buy(2000,()=>{
+s.energy=s.maxEnergy;
+});
+};
 
 }else if(tab==='portals'){
 
