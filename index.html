@@ -17,7 +17,31 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 .stat strong{font-size:20px}
 .layout{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hero{text-align:center;min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.slime{width:180px;height:155px;border-radius:50% 50% 42% 42%;background:radial-gradient(at 30% 20%,#fff,#65dff5 40%,#0875b8);box-shadow:0 0 40px #43dfff;position:relative;animation:bob 2s infinite;transition:background .2s,box-shadow .2s}
+.slime{
+  width:180px;
+  height:155px;
+  border-radius:50% 50% 42% 42%;
+  background:radial-gradient(at 30% 20%,#fff,#65dff5 40%,#0875b8);
+  box-shadow:0 0 40px #43dfff;
+  position:relative;
+  animation:bob 2s infinite;
+  transition:background .2s,box-shadow .2s;
+  transform-origin:center bottom;
+}
+
+/* Анимация тапания */
+.slime.tap-animate{
+  animation:tapPop .32s ease-out;
+}
+
+@keyframes tapPop{
+  0%{transform:scale(1,1) translateY(0);filter:brightness(1)}
+  25%{transform:scale(1.16,.78) translateY(5px);filter:brightness(1.4)}
+  50%{transform:scale(.88,1.15) translateY(-13px);filter:brightness(1.7)}
+  75%{transform:scale(1.06,.94) translateY(2px);filter:brightness(1.2)}
+  100%{transform:scale(1,1) translateY(0);filter:brightness(1)}
+}
+
 @keyframes bob{50%{transform:translateY(-9px)}}
 .eyes{position:absolute;top:60px;left:0;right:0;display:flex;justify-content:center;gap:40px}
 .eye{width:16px;height:22px;background:#10213d;border-radius:50%}
@@ -272,8 +296,26 @@ render();
 save();
 }
 
+/* Запуск анимации при каждом тапе */
+function animateTap(){
+const slime=$('slime');
+slime.classList.remove('tap-animate');
+
+/* Перезапускаем CSS-анимацию */
+void slime.offsetWidth;
+
+slime.classList.add('tap-animate');
+
+slime.addEventListener('animationend',()=>{
+slime.classList.remove('tap-animate');
+},{once:true});
+}
+
 function gain(){
 if(s.energy<1)return;
+
+animateTap();
+
 s.energy--;
 s.coins+=s.tapPower*multiplier();
 s.level=Math.max(1,Math.floor(s.coins/100)+1);
