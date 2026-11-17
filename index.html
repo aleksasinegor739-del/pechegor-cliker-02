@@ -18,22 +18,13 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 .layout{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hero{text-align:center;min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .slime{
-  width:180px;
-  height:155px;
-  border-radius:50% 50% 42% 42%;
+  width:180px;height:155px;border-radius:50% 50% 42% 42%;
   background:radial-gradient(at 30% 20%,#fff,#65dff5 40%,#0875b8);
-  box-shadow:0 0 40px #43dfff;
-  position:relative;
-  animation:bob 2s infinite;
-  transition:background .2s,box-shadow .2s;
+  box-shadow:0 0 40px #43dfff;position:relative;
+  animation:bob 2s infinite;transition:background .2s,box-shadow .2s;
   transform-origin:center bottom;
 }
-
-/* Анимация тапания */
-.slime.tap-animate{
-  animation:tapPop .32s ease-out;
-}
-
+.slime.tap-animate{animation:tapPop .32s ease-out}
 @keyframes tapPop{
   0%{transform:scale(1,1) translateY(0);filter:brightness(1)}
   25%{transform:scale(1.16,.78) translateY(5px);filter:brightness(1.4)}
@@ -41,7 +32,6 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
   75%{transform:scale(1.06,.94) translateY(2px);filter:brightness(1.2)}
   100%{transform:scale(1,1) translateY(0);filter:brightness(1)}
 }
-
 @keyframes bob{50%{transform:translateY(-9px)}}
 .eyes{position:absolute;top:60px;left:0;right:0;display:flex;justify-content:center;gap:40px}
 .eye{width:16px;height:22px;background:#10213d;border-radius:50%}
@@ -262,6 +252,10 @@ const multiplier=()=>1+s.rebirths+petMultiplier()+itemTapBonus();
 const autoIncome=()=>s.auto+itemAutoBonus();
 const currentWorld=()=>worlds[s.currentWorld];
 
+/* Проверки для перерождения */
+const allWorldsUnlocked=()=>worlds.every((w,i)=>s.unlockedWorlds.includes(i));
+const allPetsCollected=()=>pets.every(p=>s.owned.includes(p.id));
+
 function save(){
 try{
 localStorage.setItem(SAVE_KEY,JSON.stringify(s));
@@ -296,16 +290,11 @@ render();
 save();
 }
 
-/* Запуск анимации при каждом тапе */
 function animateTap(){
 const slime=$('slime');
 slime.classList.remove('tap-animate');
-
-/* Перезапускаем CSS-анимацию */
 void slime.offsetWidth;
-
 slime.classList.add('tap-animate');
-
 slime.addEventListener('animationend',()=>{
 slime.classList.remove('tap-animate');
 },{once:true});
@@ -313,9 +302,7 @@ slime.classList.remove('tap-animate');
 
 function gain(){
 if(s.energy<1)return;
-
 animateTap();
-
 s.energy--;
 s.coins+=s.tapPower*multiplier();
 s.level=Math.max(1,Math.floor(s.coins/100)+1);
@@ -467,6 +454,11 @@ c.innerHTML=html;
 
 else if(activeTab==='rebirth'){
 const cost=5000000;
+const worldsReady=allWorldsUnlocked();
+const petsReady=allPetsCollected();
+const coinsReady=s.coins>=cost;
+const canRebirth=worldsReady&&petsReady&&coinsReady;
+
 c.innerHTML=`
 <h2>♻️ Перерождение</h2>
 <div class="portal">
@@ -474,6 +466,12 @@ c.innerHTML=`
 <p>Стоимость: <strong>${fmt(cost)} монет</strong></p>
 <p>Твоих перерождений: <strong>${s.rebirths}</strong></p>
 <p>Постоянный бонус: <strong>+${s.rebirths*100}%</strong></p>
+
+<h3>📋 Условия перерождения</h3>
+<p>${worldsReady?'✅':'🔒'} Все миры открыты: ${s.unlockedWorlds.filter(i=>worlds[i]).length}/${worlds.length}</p>
+<p>${petsReady?'✅':'🔒'} Все питомцы собраны: ${pets.filter(p=>s.owned.includes(p.id)).length}/${pets.length}</p>
+<p>${coinsReady?'✅':'🔒'} Есть 5 000 000 монет: ${fmt(s.coins)} / 5 000 000</p>
+
 <p>После перерождения сбросятся:</p>
 <ul>
 <li>💰 Монеты, энергия и уровень.</li>
@@ -484,15 +482,20 @@ c.innerHTML=`
 <li>🎒 Все предметы и экипировка.</li>
 <li>🎨 Все открытые скины.</li>
 </ul>
+
 <p><strong>Останется только количество перерождений и постоянный бонус к множителю!</strong></p>
-<button class="action" data-action="rebirth" ${s.coins<cost?'disabled':''}>♻️ Переродиться</button>
-${s.coins<cost?'<p class="muted">Нужно ещё '+fmt(cost-s.coins)+' монет.</p>':''}
+
+<button class="action" data-action="rebirth" ${canRebirth?'':'disabled'}>♻️ Переродиться</button>
+
+${!worldsReady?'<p class="muted">🔒 Сначала открой все 10 миров.</p>':''}
+${!petsReady?'<p class="muted">🔒 Сначала собери всех 19 питомцев.</p>':''}
+${!coinsReady?'<p class="muted">🔒 Нужно ещё '+fmt(cost-s.coins)+' монет.</p>':''}
 </div>`;
 }
 
 else if(activeTab==='index'){
-let html=`<h2>📖 Индекс питомцев</h2><p>Собрано: ${s.owned.length} / ${pets.length}</p>
-<div class="progress"><span style="width:${s.owned.length/pets.length*100}%"></span></div><div class="petgrid">`;
+let html=`<h2>📖 Индекс питомцев</h2><p>Собрано: ${s.owned.filter(id=>pets.some(p=>p.id===id)).length} / ${pets.length}</p>
+<div class="progress"><span style="width:${pets.filter(p=>s.owned.includes(p.id)).length/pets.length*100}%"></span></div><div class="petgrid">`;
 pets.forEach(p=>{
 const owned=s.owned.includes(p.id);
 html+=`<div class="petcard"><div class="big">${owned?p.emoji:'❔'}</div><strong>${owned?p.name:'Неизвестный питомец'}</strong><small>${owned?p.rarity:'Ещё не найден'}</small></div>`;
@@ -521,6 +524,17 @@ alert('🎉 Получен питомец: '+pet.emoji+' '+pet.name);
 
 function doRebirth(){
 const cost=5000000;
+
+/* Защита: проверяем все условия до сброса прогресса */
+if(!allWorldsUnlocked()){
+alert('🔒 Для перерождения нужно открыть все 10 миров!');
+return;
+}
+
+if(!allPetsCollected()){
+alert('🔒 Для перерождения нужно собрать всех 19 питомцев!');
+return;
+}
 
 if(s.coins<cost){
 alert('Нужно 5 000 000 монет для перерождения!');
@@ -608,7 +622,6 @@ const i=Number(id);
 const w=worlds[i];
 
 if(!w||s.unlockedWorlds.includes(i))return;
-
 if(i===0)return;
 
 if(!s.bossesDefeated.includes(i-1)){
