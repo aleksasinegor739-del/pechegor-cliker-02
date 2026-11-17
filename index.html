@@ -45,7 +45,7 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 .tab.active{background:#55c9ed;color:#07152e}
 .action{background:linear-gradient(135deg,#61dafa,#3d92e7);color:#07152e;margin:4px}
 .action:disabled{opacity:.4;cursor:not-allowed}
-.item,.portal,.petcard,.world-card{background:#0b1531;border:1px solid #34466f;border-radius:12px;padding:12px;margin:9px 0}
+.item,.portal,.petcard,.world-card,.location-card{background:#0b1531;border:1px solid #34466f;border-radius:12px;padding:12px;margin:9px 0}
 .item{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .desc{flex:1;min-width:120px}
 .desc small,.muted,small{color:#b9c7e8}
@@ -59,6 +59,11 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 .progress span,.boss-health span{display:block;height:100%;background:linear-gradient(90deg,#5ee7ff,#a879ff)}
 .notice{text-align:center;color:#aab8dc;font-size:12px}
 .world-card.selected{border-color:#5ee7ff;box-shadow:0 0 12px #38bdf855}
+.location-card.selected{border-color:#c58cff;box-shadow:0 0 14px #a879ff66}
+.location-card.locked{opacity:.72}
+.location-icon{font-size:38px}
+.location-status{font-weight:bold;color:#8eeaff}
+.location-card.selected .location-status{color:#c99bff}
 @media(max-width:700px){.layout{grid-template-columns:1fr}.stats{font-size:13px}}
 </style>
 </head>
@@ -80,6 +85,7 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 <div class="panel hero">
 <h2 id="rank">Новичок</h2>
 <p id="worldLabel">🌲 Лес</p>
+<p id="locationLabel">📍 Зелёная долина</p>
 <button class="tap" id="tap">
 <div class="skin-badge" id="skinBadge">🩵</div>
 <div class="slime" id="slime">
@@ -96,6 +102,7 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 <div class="tabs" id="tabs">
 <button class="tab active" data-tab="shop">🛒 Магазин</button>
 <button class="tab" data-tab="worlds">🌍 Миры</button>
+<button class="tab" data-tab="locations">📍 Локации</button>
 <button class="tab" data-tab="portals">🌀 Порталы</button>
 <button class="tab" data-tab="pets">🐾 Питомцы</button>
 <button class="tab" data-tab="skins">🎨 Скины</button>
@@ -114,13 +121,15 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 
 const $=id=>document.getElementById(id);
 const SAVE_KEY='pechegor-save';
+const LOCATION_COUNT=6;
 
 const defaults={
 coins:0,energy:100,maxEnergy:100,level:1,tapPower:1,auto:0,
 owned:[],skin:0,upgrades:0,batteryUpgrades:0,equipped:[],
 petLevels:{},itemsOwned:[],itemsEquipped:[],
 unlockedWorlds:[0],currentWorld:0,bossHP:{},bossesDefeated:[],
-rebirths:0,ownedSkins:[0]
+rebirths:0,ownedSkins:[0],
+unlockedLocations:[0],currentLocation:0
 };
 
 function loadGame(){
@@ -130,7 +139,8 @@ const data={...defaults,...saved};
 
 [
 'owned','equipped','itemsOwned','itemsEquipped',
-'unlockedWorlds','bossesDefeated','ownedSkins'
+'unlockedWorlds','bossesDefeated','ownedSkins',
+'unlockedLocations'
 ].forEach(k=>{
 if(!Array.isArray(data[k]))data[k]=[];
 });
@@ -146,12 +156,21 @@ data[k]=Math.max(0,Number(data[k])||0);
 });
 
 data.currentWorld=Math.max(0,Math.floor(Number(data.currentWorld)||0));
+data.currentLocation=Math.max(0,Math.floor(Number(data.currentLocation)||0));
 
 data.unlockedWorlds=[...new Set(
 data.unlockedWorlds.map(Number).filter(x=>Number.isInteger(x)&&x>=0&&x<=9)
 )];
 if(!data.unlockedWorlds.includes(0))data.unlockedWorlds.unshift(0);
 if(!data.unlockedWorlds.includes(data.currentWorld))data.currentWorld=0;
+
+data.unlockedLocations=[...new Set(
+data.unlockedLocations.map(Number).filter(x=>
+Number.isInteger(x)&&x>=0&&x<LOCATION_COUNT
+)
+)];
+if(!data.unlockedLocations.includes(0))data.unlockedLocations.unshift(0);
+if(!data.unlockedLocations.includes(data.currentLocation))data.currentLocation=0;
 
 data.equipped=data.equipped.filter(id=>data.owned.includes(id)).slice(0,5);
 data.itemsEquipped=data.itemsEquipped.filter(id=>data.itemsOwned.includes(id)).slice(0,8);
@@ -182,6 +201,45 @@ const worlds=[
 {name:'Мир конфет',icon:'🍬',desc:'Шоколадные горы и карамельные реки.',cost:600000,boss:'Король конфет',bossIcon:'🍭',hp:1000000,reward:1200000,pet:'🍡'},
 {name:'Мир призраков',icon:'👻',desc:'Призрачные замки.',cost:1500000,boss:'Король призраков',bossIcon:'👻',hp:3500000,reward:3000000,pet:'💀'},
 {name:'Секретное измерение',icon:'🌀',desc:'Скрытая реальность.',cost:5000000,boss:'Повелитель измерений',bossIcon:'🌀',hp:10000000,reward:10000000,pet:'🔮'}
+];
+
+const locations=[
+{
+name:'Зелёная долина',
+icon:'🌲',
+desc:'Твоя первая локация. Здесь начинается большое приключение.',
+requiredRebirths:0
+},
+{
+name:'Кристальная долина',
+icon:'💎',
+desc:'Волшебная долина, наполненная сияющими кристаллами.',
+requiredRebirths:10
+},
+{
+name:'Огненные земли',
+icon:'🌋',
+desc:'Жаркая территория древних вулканов и потоков лавы.',
+requiredRebirths:20
+},
+{
+name:'Галактический порт',
+icon:'🌌',
+desc:'Космическая станция на краю бесконечной галактики.',
+requiredRebirths:30
+},
+{
+name:'Ледяная цитадель',
+icon:'🧊',
+desc:'Древняя крепость среди вечных снегов и ледяных гор.',
+requiredRebirths:40
+},
+{
+name:'Измерение вечности',
+icon:'🌀',
+desc:'Таинственное измерение, доступное лишь величайшим игрокам.',
+requiredRebirths:50
+}
 ];
 
 const pets=[
@@ -251,10 +309,38 @@ const itemAutoBonus=()=>equippedItems().reduce((a,x)=>a+x.auto,0);
 const multiplier=()=>1+s.rebirths+petMultiplier()+itemTapBonus();
 const autoIncome=()=>s.auto+itemAutoBonus();
 const currentWorld=()=>worlds[s.currentWorld];
+const currentLocation=()=>locations[s.currentLocation]||locations[0];
 
 /* Проверки для перерождения */
 const allWorldsUnlocked=()=>worlds.every((w,i)=>s.unlockedWorlds.includes(i));
 const allPetsCollected=()=>pets.every(p=>s.owned.includes(p.id));
+
+/* Открытие локаций за перерождения */
+function unlockLocationsForRebirths(){
+const newlyUnlocked=[];
+
+locations.forEach((location,index)=>{
+if(
+s.rebirths>=location.requiredRebirths&&
+!s.unlockedLocations.includes(index)
+){
+s.unlockedLocations.push(index);
+newlyUnlocked.push(location);
+}
+});
+
+if(newlyUnlocked.length){
+const newest=locations
+.map((location,index)=>({location,index}))
+.filter(entry=>s.unlockedLocations.includes(entry.index))
+.sort((a,b)=>a.index-b.index)
+.pop();
+
+if(newest)s.currentLocation=newest.index;
+}
+
+return newlyUnlocked;
+}
 
 function save(){
 try{
@@ -272,6 +358,8 @@ $('slime').style.boxShadow='0 0 40px '+skin.glow;
 }
 
 function update(){
+unlockLocationsForRebirths();
+
 $('coins').textContent=fmt(s.coins);
 $('energy').textContent=fmt(s.energy)+' / '+fmt(s.maxEnergy);
 $('level').textContent=s.level;
@@ -279,6 +367,7 @@ $('perTap').textContent='За нажатие: '+fmt(s.tapPower*multiplier());
 $('bonusText').textContent='Множитель: x'+multiplier().toFixed(2)+' | Перерождений: '+s.rebirths;
 $('rank').textContent=s.level>=100?'Легенда':s.level>=50?'Мастер':s.level>=20?'Опытный игрок':'Новичок';
 $('worldLabel').textContent=currentWorld().icon+' '+currentWorld().name;
+$('locationLabel').textContent='📍 '+currentLocation().icon+' '+currentLocation().name;
 
 updateSkinVisual();
 
@@ -394,6 +483,36 @@ ${defeated?'<p>🏆 Этот босс уже побеждён!</p>':'<button cla
 c.innerHTML=html;
 }
 
+else if(activeTab==='locations'){
+let html=`
+<h2>📍 Локации</h2>
+<p class="muted">Открывай новые места за перерождения. Локации не влияют на открытие игровых миров и сохраняются после сброса прогресса.</p>
+<p>Текущая локация: <strong>${currentLocation().icon} ${currentLocation().name}</strong></p>
+`;
+
+locations.forEach((location,index)=>{
+const unlocked=s.unlockedLocations.includes(index);
+const selected=s.currentLocation===index;
+
+html+=`
+<div class="location-card ${selected?'selected':''} ${unlocked?'':'locked'}">
+<div class="location-icon">${unlocked?location.icon:'🔒'}</div>
+<strong>${location.name}</strong>
+<p class="muted">${location.desc}</p>
+<p>Требуется перерождений: <strong>${location.requiredRebirths}</strong></p>
+<p class="location-status">
+${selected?'📍 Текущая локация':unlocked?'✅ Открыта':'🔒 Закрыта'}
+</p>
+${unlocked?
+`<button class="action" data-action="selectLocation" data-id="${index}" ${selected?'disabled':''}>${selected?'Выбрана':'Перейти'}</button>`:
+`<p class="muted">Осталось перерождений: ${Math.max(0,location.requiredRebirths-s.rebirths)}</p>`
+}
+</div>`;
+});
+
+c.innerHTML=html;
+}
+
 else if(activeTab==='portals'){
 c.innerHTML=`
 <h2>🌀 Порталы</h2><p class="muted">Открывай порталы и получай случайных питомцев.</p>
@@ -483,7 +602,7 @@ c.innerHTML=`
 <li>🎨 Все открытые скины.</li>
 </ul>
 
-<p><strong>Останется только количество перерождений и постоянный бонус к множителю!</strong></p>
+<p><strong>Останутся количество перерождений, постоянный бонус и открытые локации!</strong></p>
 
 <button class="action" data-action="rebirth" ${canRebirth?'':'disabled'}>♻️ Переродиться</button>
 
@@ -542,7 +661,7 @@ return;
 }
 
 const confirmed=confirm(
-'Переродиться? Весь прогресс, питомцы, миры, боссы, предметы и скины будут сброшены. Сохранится только бонус перерождений.'
+'Переродиться? Весь игровой прогресс, питомцы, миры, боссы, предметы и скины будут сброшены. Открытые локации сохранятся.'
 );
 if(!confirmed)return;
 
@@ -571,14 +690,27 @@ ownedSkins:[0],
 rebirths:nextRebirths
 });
 
+/* Открываем новую локацию, если достигнут очередной порог */
+const newlyUnlockedLocations=unlockLocationsForRebirths();
+
 activeTab='rebirth';
 update();
+
+let locationMessage='';
+
+if(newlyUnlockedLocations.length){
+locationMessage=
+'\n\n📍 Новая локация открыта: '+
+newlyUnlockedLocations.map(location=>location.icon+' '+location.name).join(', ')+
+'\nТы автоматически перемещён в неё!';
+}
 
 alert(
 '♻️ Перерождение выполнено!\n\n'+
 'Весь игровой прогресс сброшен.\n'+
 'Количество перерождений: '+s.rebirths+'\n'+
-'Постоянный бонус: +'+(s.rebirths*100)+'%'
+'Постоянный бонус: +'+(s.rebirths*100)+'%'+
+locationMessage
 );
 }
 
@@ -635,6 +767,20 @@ s.currentWorld=i;
 });
 }
 
+else if(action==='selectLocation'){
+const i=Number(id);
+
+if(!Number.isInteger(i)||i<0||i>=locations.length)return;
+
+if(!s.unlockedLocations.includes(i)){
+alert('🔒 Эта локация ещё закрыта!');
+return;
+}
+
+s.currentLocation=i;
+update();
+}
+
 else if(action==='attackBoss'){
 const i=s.currentWorld;
 const w=worlds[i];
@@ -666,13 +812,26 @@ const type=btn.dataset.type;
 let cost=100;
 let pool=['star','robot','bear'];
 
-if(type==='purple'){cost=500;pool=['moon','fox','octopus','alien','unicorn','diamond'];}
-if(type==='gold'){cost=2000;pool=['dragon','phoenix','ghost','crown','planet','comet','nebula','blackhole'];}
+if(type==='purple'){
+cost=500;
+pool=['moon','fox','octopus','alien','unicorn','diamond','shark'];
+}
+
+if(type==='gold'){
+cost=2000;
+pool=['dragon','phoenix','ghost','crown','planet','comet','nebula','blackhole'];
+}
+
+/* Проверяем наличие доступных питомцев до списания монет */
+const pet=getRandomPet(pool);
+
+if(!pet){
+alert('Ты уже собрал всех питомцев из этого портала! Монеты не списаны.');
+return;
+}
 
 buy(cost,()=>{
-const pet=getRandomPet(pool);
-if(pet)givePet(pet);
-else alert('Все питомцы этого портала уже собраны!');
+givePet(pet);
 });
 }
 
@@ -782,6 +941,9 @@ changed=true;
 
 if(changed)update();
 },1000);
+
+/* При загрузке проверяем, не накоплены ли перерождения для новых локаций */
+unlockLocationsForRebirths();
 
 update();
 </script>
