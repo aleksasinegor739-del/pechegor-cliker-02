@@ -17,21 +17,9 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 .stat strong{font-size:20px}
 .layout{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .hero{text-align:center;min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.slime{
-  width:180px;height:155px;border-radius:50% 50% 42% 42%;
-  background:radial-gradient(at 30% 20%,#fff,#65dff5 40%,#0875b8);
-  box-shadow:0 0 40px #43dfff;position:relative;
-  animation:bob 2s infinite;transition:background .2s,box-shadow .2s;
-  transform-origin:center bottom;
-}
+.slime{width:180px;height:155px;border-radius:50% 50% 42% 42%;background:radial-gradient(at 30% 20%,#fff,#65dff5 40%,#0875b8);box-shadow:0 0 40px #43dfff;position:relative;animation:bob 2s infinite;transition:background .2s,box-shadow .2s;transform-origin:center bottom}
 .slime.tap-animate{animation:tapPop .32s ease-out}
-@keyframes tapPop{
-  0%{transform:scale(1,1) translateY(0);filter:brightness(1)}
-  25%{transform:scale(1.16,.78) translateY(5px);filter:brightness(1.4)}
-  50%{transform:scale(.88,1.15) translateY(-13px);filter:brightness(1.7)}
-  75%{transform:scale(1.06,.94) translateY(2px);filter:brightness(1.2)}
-  100%{transform:scale(1,1) translateY(0);filter:brightness(1)}
-}
+@keyframes tapPop{0%{transform:scale(1,1) translateY(0);filter:brightness(1)}25%{transform:scale(1.16,.78) translateY(5px);filter:brightness(1.4)}50%{transform:scale(.88,1.15) translateY(-13px);filter:brightness(1.7)}75%{transform:scale(1.06,.94) translateY(2px);filter:brightness(1.2)}100%{transform:scale(1,1) translateY(0);filter:brightness(1)}}
 @keyframes bob{50%{transform:translateY(-9px)}}
 .eyes{position:absolute;top:60px;left:0;right:0;display:flex;justify-content:center;gap:40px}
 .eye{width:16px;height:22px;background:#10213d;border-radius:50%}
@@ -64,6 +52,13 @@ h1{color:#8eeaff;text-shadow:0 0 15px #38bdf8}
 .location-icon{font-size:38px}
 .location-status{font-weight:bold;color:#8eeaff}
 .location-card.selected .location-status{color:#c99bff}
+.location-pets{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px}
+.location-pet{background:#17264a;border:1px solid #405781;border-radius:10px;padding:9px;text-align:center}
+.location-pet .big{font-size:27px}
+.location-pet small{display:block;margin-top:4px}
+.location-pet.owned{border-color:#55c9ed}
+.location-pet.locked{opacity:.6}
+.pet-power{color:#8eeaff;font-weight:bold}
 @media(max-width:700px){.layout{grid-template-columns:1fr}.stats{font-size:13px}}
 </style>
 </head>
@@ -129,7 +124,8 @@ owned:[],skin:0,upgrades:0,batteryUpgrades:0,equipped:[],
 petLevels:{},itemsOwned:[],itemsEquipped:[],
 unlockedWorlds:[0],currentWorld:0,bossHP:{},bossesDefeated:[],
 rebirths:0,ownedSkins:[0],
-unlockedLocations:[0],currentLocation:0
+unlockedLocations:[0],currentLocation:0,
+locationPetsOwned:[]
 };
 
 function loadGame(){
@@ -140,7 +136,7 @@ const data={...defaults,...saved};
 [
 'owned','equipped','itemsOwned','itemsEquipped',
 'unlockedWorlds','bossesDefeated','ownedSkins',
-'unlockedLocations'
+'unlockedLocations','locationPetsOwned'
 ].forEach(k=>{
 if(!Array.isArray(data[k]))data[k]=[];
 });
@@ -165,12 +161,12 @@ if(!data.unlockedWorlds.includes(0))data.unlockedWorlds.unshift(0);
 if(!data.unlockedWorlds.includes(data.currentWorld))data.currentWorld=0;
 
 data.unlockedLocations=[...new Set(
-data.unlockedLocations.map(Number).filter(x=>
-Number.isInteger(x)&&x>=0&&x<LOCATION_COUNT
-)
+data.unlockedLocations.map(Number).filter(x=>Number.isInteger(x)&&x>=0&&x<LOCATION_COUNT)
 )];
 if(!data.unlockedLocations.includes(0))data.unlockedLocations.unshift(0);
 if(!data.unlockedLocations.includes(data.currentLocation))data.currentLocation=0;
+
+data.locationPetsOwned=[...new Set(data.locationPetsOwned.map(String))];
 
 data.equipped=data.equipped.filter(id=>data.owned.includes(id)).slice(0,5);
 data.itemsEquipped=data.itemsEquipped.filter(id=>data.itemsOwned.includes(id)).slice(0,8);
@@ -204,42 +200,59 @@ const worlds=[
 ];
 
 const locations=[
-{
-name:'Зелёная долина',
-icon:'🌲',
-desc:'Твоя первая локация. Здесь начинается большое приключение.',
-requiredRebirths:0
-},
-{
-name:'Кристальная долина',
-icon:'💎',
-desc:'Волшебная долина, наполненная сияющими кристаллами.',
-requiredRebirths:10
-},
-{
-name:'Огненные земли',
-icon:'🌋',
-desc:'Жаркая территория древних вулканов и потоков лавы.',
-requiredRebirths:20
-},
-{
-name:'Галактический порт',
-icon:'🌌',
-desc:'Космическая станция на краю бесконечной галактики.',
-requiredRebirths:30
-},
-{
-name:'Ледяная цитадель',
-icon:'🧊',
-desc:'Древняя крепость среди вечных снегов и ледяных гор.',
-requiredRebirths:40
-},
-{
-name:'Измерение вечности',
-icon:'🌀',
-desc:'Таинственное измерение, доступное лишь величайшим игрокам.',
-requiredRebirths:50
-}
+{name:'Зелёная долина',icon:'🌲',desc:'Твоя первая локация. Здесь начинается большое приключение.',requiredRebirths:0},
+{name:'Кристальная долина',icon:'💎',desc:'Волшебная долина, наполненная сияющими кристаллами.',requiredRebirths:10},
+{name:'Огненные земли',icon:'🌋',desc:'Жаркая территория древних вулканов и потоков лавы.',requiredRebirths:20},
+{name:'Галактический порт',icon:'🌌',desc:'Космическая станция на краю бесконечной галактики.',requiredRebirths:30},
+{name:'Ледяная цитадель',icon:'🧊',desc:'Древняя крепость среди вечных снегов и ледяных гор.',requiredRebirths:40},
+{name:'Измерение вечности',icon:'🌀',desc:'Таинственное измерение, доступное лишь величайшим игрокам.',requiredRebirths:50}
+];
+
+/* 5 уникальных питомцев для каждой локации.
+   Чем выше номер локации, тем сильнее питомцы. */
+const locationPets=[
+[
+{id:'forest_bunny',name:'Лесной зайчик',emoji:'🐰',mult:2},
+{id:'forest_fairy',name:'Фея листьев',emoji:'🧚',mult:3},
+{id:'forest_deer',name:'Олень-хранитель',emoji:'🦌',mult:4},
+{id:'forest_owl',name:'Мудрая сова',emoji:'🦉',mult:5},
+{id:'forest_treant',name:'Древний энт',emoji:'🌳',mult:7}
+],
+[
+{id:'crystal_bat',name:'Кристальная летучая мышь',emoji:'🦇',mult:10},
+{id:'crystal_fox',name:'Алмазная лиса',emoji:'🦊',mult:12},
+{id:'crystal_golem',name:'Кристальный голем',emoji:'💠',mult:15},
+{id:'crystal_dragon',name:'Дракон самоцветов',emoji:'🐲',mult:18},
+{id:'crystal_queen',name:'Королева кристаллов',emoji:'👸',mult:22}
+],
+[
+{id:'lava_imp',name:'Огненный бес',emoji:'😈',mult:25},
+{id:'lava_wolf',name:'Лавовый волк',emoji:'🐺',mult:30},
+{id:'lava_salamander',name:'Пламенная саламандра',emoji:'🦎',mult:35},
+{id:'lava_titan',name:'Магмовый титан',emoji:'🔥',mult:42},
+{id:'lava_phoenix',name:'Феникс вечного огня',emoji:'🦅',mult:50}
+],
+[
+{id:'space_bot',name:'Звёздный робот',emoji:'🤖',mult:60},
+{id:'space_cat',name:'Космический кот',emoji:'🐱',mult:70},
+{id:'space_jelly',name:'Галактическая медуза',emoji:'🪼',mult:85},
+{id:'space_guardian',name:'Страж галактики',emoji:'🛡️',mult:100},
+{id:'space_emperor',name:'Император звёзд',emoji:'👑',mult:120}
+],
+[
+{id:'ice_penguin',name:'Ледяной пингвин',emoji:'🐧',mult:140},
+{id:'ice_wyvern',name:'Снежный виверн',emoji:'🐉',mult:165},
+{id:'ice_spirit',name:'Дух метели',emoji:'❄️',mult:190},
+{id:'ice_giant',name:'Ледяной исполин',emoji:'🧊',mult:225},
+{id:'ice_queen',name:'Королева вечной зимы',emoji:'👑',mult:270}
+],
+[
+{id:'eternity_eye',name:'Око вечности',emoji:'👁️',mult:300},
+{id:'eternity_serpent',name:'Змей измерений',emoji:'🐍',mult:350},
+{id:'eternity_angel',name:'Ангел бесконечности',emoji:'😇',mult:420},
+{id:'eternity_titan',name:'Титан пространства',emoji:'🌠',mult:500},
+{id:'eternity_god',name:'Абсолют вечности',emoji:'🌌',mult:650}
+]
 ];
 
 const pets=[
@@ -304,50 +317,47 @@ const p=pets.find(x=>x.id===id);
 return a+(id==='dimension_pet'?99:(p?.mult||0)*.15*petLevel(id));
 },0);
 
+const locationPetMultiplier=()=>s.locationPetsOwned.reduce((total,id)=>{
+for(const group of locationPets){
+const pet=group.find(p=>p.id===id);
+if(pet)return total+pet.mult*.15;
+}
+return total;
+},0);
+
 const itemTapBonus=()=>equippedItems().reduce((a,x)=>a+x.tap,0);
 const itemAutoBonus=()=>equippedItems().reduce((a,x)=>a+x.auto,0);
-const multiplier=()=>1+s.rebirths+petMultiplier()+itemTapBonus();
+const multiplier=()=>1+s.rebirths+petMultiplier()+locationPetMultiplier()+itemTapBonus();
 const autoIncome=()=>s.auto+itemAutoBonus();
 const currentWorld=()=>worlds[s.currentWorld];
 const currentLocation=()=>locations[s.currentLocation]||locations[0];
+const currentLocationPets=()=>locationPets[s.currentLocation]||[];
 
-/* Проверки для перерождения */
 const allWorldsUnlocked=()=>worlds.every((w,i)=>s.unlockedWorlds.includes(i));
 const allPetsCollected=()=>pets.every(p=>s.owned.includes(p.id));
 
-/* Открытие локаций за перерождения */
 function unlockLocationsForRebirths(){
 const newlyUnlocked=[];
 
 locations.forEach((location,index)=>{
-if(
-s.rebirths>=location.requiredRebirths&&
-!s.unlockedLocations.includes(index)
-){
+if(s.rebirths>=location.requiredRebirths&&!s.unlockedLocations.includes(index)){
 s.unlockedLocations.push(index);
 newlyUnlocked.push(location);
 }
 });
 
 if(newlyUnlocked.length){
-const newest=locations
-.map((location,index)=>({location,index}))
+const newest=locations.map((location,index)=>({location,index}))
 .filter(entry=>s.unlockedLocations.includes(entry.index))
-.sort((a,b)=>a.index-b.index)
-.pop();
-
+.sort((a,b)=>a.index-b.index).pop();
 if(newest)s.currentLocation=newest.index;
 }
-
 return newlyUnlocked;
 }
 
 function save(){
-try{
-localStorage.setItem(SAVE_KEY,JSON.stringify(s));
-}catch(e){
-console.warn('Не удалось сохранить игру:',e);
-}
+try{localStorage.setItem(SAVE_KEY,JSON.stringify(s));}
+catch(e){console.warn('Не удалось сохранить игру:',e);}
 }
 
 function updateSkinVisual(){
@@ -384,9 +394,7 @@ const slime=$('slime');
 slime.classList.remove('tap-animate');
 void slime.offsetWidth;
 slime.classList.add('tap-animate');
-slime.addEventListener('animationend',()=>{
-slime.classList.remove('tap-animate');
-},{once:true});
+slime.addEventListener('animationend',()=>slime.classList.remove('tap-animate'),{once:true});
 }
 
 function gain(){
@@ -413,8 +421,7 @@ gain();
 });
 
 document.addEventListener('keydown',e=>{
-if(e.code==='Space'&&!e.repeat&&
-!['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)){
+if(e.code==='Space'&&!e.repeat&&!['INPUT','TEXTAREA','BUTTON'].includes(document.activeElement.tagName)){
 e.preventDefault();
 gain();
 }
@@ -436,6 +443,24 @@ s.coins-=cost;
 fn();
 update();
 return true;
+}
+
+function locationPetCost(locationIndex,ownedCount){
+return Math.floor(500*(locationIndex+1)*Math.pow(2,ownedCount));
+}
+
+function renderLocationPets(index){
+const group=locationPets[index]||[];
+return group.map(pet=>{
+const owned=s.locationPetsOwned.includes(pet.id);
+return `
+<div class="location-pet ${owned?'owned':'locked'}">
+<div class="big">${owned?pet.emoji:'❔'}</div>
+<strong>${owned?pet.name:'Неизвестный питомец'}</strong>
+<small>${owned?'Получен':'Ещё не найден'}</small>
+<small class="pet-power">${owned?'Бонус: +'+pet.mult+'%':'Сила: '+pet.mult+'%'}</small>
+</div>`;
+}).join('');
 }
 
 function render(){
@@ -484,29 +509,45 @@ c.innerHTML=html;
 }
 
 else if(activeTab==='locations'){
+const location=currentLocation();
+const group=currentLocationPets();
+const ownedCount=group.filter(p=>s.locationPetsOwned.includes(p.id)).length;
+const cost=locationPetCost(s.currentLocation,ownedCount);
+const allFound=ownedCount===group.length;
+
 let html=`
 <h2>📍 Локации</h2>
-<p class="muted">Открывай новые места за перерождения. Локации не влияют на открытие игровых миров и сохраняются после сброса прогресса.</p>
-<p>Текущая локация: <strong>${currentLocation().icon} ${currentLocation().name}</strong></p>
-`;
+<p class="muted">В каждой локации живут пять уникальных питомцев. Чем дальше ты продвигаешься, тем сильнее они становятся.</p>
+<div class="portal">
+<h3>${location.icon} ${location.name}</h3>
+<p>${location.desc}</p>
+<p>Собрано питомцев: <strong>${ownedCount}/5</strong></p>
+<div class="progress"><span style="width:${ownedCount/5*100}%"></span></div>
+<h3>🐾 Питомцы этой локации</h3>
+<div class="location-pets">${renderLocationPets(s.currentLocation)}</div>
+${allFound?
+'<p class="location-status">🏆 Все пять питомцев этой локации собраны!</p>':
+`<p>Стоимость поиска следующего питомца: <strong>${fmt(cost)} 💰</strong></p>
+<button class="action" data-action="findLocationPet">🔎 Найти питомца</button>`}
+</div>
+<h3>Все локации</h3>`;
 
-locations.forEach((location,index)=>{
-const unlocked=s.unlockedLocations.includes(index);
-const selected=s.currentLocation===index;
+locations.forEach((loc,i)=>{
+const unlocked=s.unlockedLocations.includes(i);
+const selected=s.currentLocation===i;
+const found=locationPets[i].filter(p=>s.locationPetsOwned.includes(p.id)).length;
 
 html+=`
 <div class="location-card ${selected?'selected':''} ${unlocked?'':'locked'}">
-<div class="location-icon">${unlocked?location.icon:'🔒'}</div>
-<strong>${location.name}</strong>
-<p class="muted">${location.desc}</p>
-<p>Требуется перерождений: <strong>${location.requiredRebirths}</strong></p>
-<p class="location-status">
-${selected?'📍 Текущая локация':unlocked?'✅ Открыта':'🔒 Закрыта'}
-</p>
+<div class="location-icon">${unlocked?loc.icon:'🔒'}</div>
+<strong>${loc.name}</strong>
+<p class="muted">${loc.desc}</p>
+<p>Требуется перерождений: <strong>${loc.requiredRebirths}</strong></p>
+<p class="location-status">${selected?'📍 Текущая локация':unlocked?'✅ Открыта':'🔒 Закрыта'}</p>
+<p>Питомцы: ${found}/5</p>
 ${unlocked?
-`<button class="action" data-action="selectLocation" data-id="${index}" ${selected?'disabled':''}>${selected?'Выбрана':'Перейти'}</button>`:
-`<p class="muted">Осталось перерождений: ${Math.max(0,location.requiredRebirths-s.rebirths)}</p>`
-}
+`<button class="action" data-action="selectLocation" data-id="${i}" ${selected?'disabled':''}>${selected?'Выбрана':'Перейти'}</button>`:
+`<p class="muted">Осталось перерождений: ${Math.max(0,loc.requiredRebirths-s.rebirths)}</p>`}
 </div>`;
 });
 
@@ -535,6 +576,24 @@ ${lvl<5?`<button class="action" data-action="upgradePet" data-id="${p.id}">Ул�
 </div>`;
 });
 html+='</div>';
+
+const locationOwned=s.locationPetsOwned.length;
+const locationTotal=locationPets.reduce((sum,group)=>sum+group.length,0);
+html+=`<h2>📍 Питомцы локаций</h2><p>Собрано: ${locationOwned}/${locationTotal}</p>
+<p class="muted">Питомцы локаций автоматически дают бонус к множителю.</p>`;
+
+locationPets.forEach((group,index)=>{
+html+=`<h3>${locations[index].icon} ${locations[index].name}</h3><div class="petgrid">`;
+group.forEach(p=>{
+const owned=s.locationPetsOwned.includes(p.id);
+html+=`<div class="petcard"><div class="big">${owned?p.emoji:'❔'}</div>
+<strong>${owned?p.name:'Неизвестный питомец'}</strong>
+<small>${owned?'Получен':'Не найден'}</small>
+<small>${owned?'Бонус: +'+p.mult+'%':'Сила: '+p.mult+'%'}</small></div>`;
+});
+html+='</div>';
+});
+
 c.innerHTML=html;
 }
 
@@ -585,41 +644,49 @@ c.innerHTML=`
 <p>Стоимость: <strong>${fmt(cost)} монет</strong></p>
 <p>Твоих перерождений: <strong>${s.rebirths}</strong></p>
 <p>Постоянный бонус: <strong>+${s.rebirths*100}%</strong></p>
-
 <h3>📋 Условия перерождения</h3>
 <p>${worldsReady?'✅':'🔒'} Все миры открыты: ${s.unlockedWorlds.filter(i=>worlds[i]).length}/${worlds.length}</p>
-<p>${petsReady?'✅':'🔒'} Все питомцы собраны: ${pets.filter(p=>s.owned.includes(p.id)).length}/${pets.length}</p>
+<p>${petsReady?'✅':'🔒'} Все обычные питомцы собраны: ${pets.filter(p=>s.owned.includes(p.id)).length}/${pets.length}</p>
 <p>${coinsReady?'✅':'🔒'} Есть 5 000 000 монет: ${fmt(s.coins)} / 5 000 000</p>
-
 <p>После перерождения сбросятся:</p>
 <ul>
 <li>💰 Монеты, энергия и уровень.</li>
 <li>🛒 Все улучшения.</li>
-<li>🐾 Все питомцы и их уровни.</li>
+<li>🐾 Обычные питомцы и их уровни.</li>
 <li>🌍 Все открытые миры.</li>
 <li>👹 Все победы над боссами.</li>
 <li>🎒 Все предметы и экипировка.</li>
 <li>🎨 Все открытые скины.</li>
 </ul>
-
-<p><strong>Останутся количество перерождений, постоянный бонус и открытые локации!</strong></p>
-
+<p><strong>Останутся перерождения, бонус и все открытые локации с их питомцами!</strong></p>
 <button class="action" data-action="rebirth" ${canRebirth?'':'disabled'}>♻️ Переродиться</button>
-
 ${!worldsReady?'<p class="muted">🔒 Сначала открой все 10 миров.</p>':''}
-${!petsReady?'<p class="muted">🔒 Сначала собери всех 19 питомцев.</p>':''}
+${!petsReady?'<p class="muted">🔒 Сначала собери всех 19 обычных питомцев.</p>':''}
 ${!coinsReady?'<p class="muted">🔒 Нужно ещё '+fmt(cost-s.coins)+' монет.</p>':''}
 </div>`;
 }
 
 else if(activeTab==='index'){
-let html=`<h2>📖 Индекс питомцев</h2><p>Собрано: ${s.owned.filter(id=>pets.some(p=>p.id===id)).length} / ${pets.length}</p>
+let html=`<h2>📖 Индекс обычных питомцев</h2><p>Собрано: ${s.owned.filter(id=>pets.some(p=>p.id===id)).length} / ${pets.length}</p>
 <div class="progress"><span style="width:${pets.filter(p=>s.owned.includes(p.id)).length/pets.length*100}%"></span></div><div class="petgrid">`;
 pets.forEach(p=>{
 const owned=s.owned.includes(p.id);
 html+=`<div class="petcard"><div class="big">${owned?p.emoji:'❔'}</div><strong>${owned?p.name:'Неизвестный питомец'}</strong><small>${owned?p.rarity:'Ещё не найден'}</small></div>`;
 });
+html+='</div><h2>📍 Индекс питомцев локаций</h2>';
+
+locationPets.forEach((group,index)=>{
+const found=group.filter(p=>s.locationPetsOwned.includes(p.id)).length;
+html+=`<h3>${locations[index].icon} ${locations[index].name} — ${found}/5</h3><div class="petgrid">`;
+group.forEach(p=>{
+const owned=s.locationPetsOwned.includes(p.id);
+html+=`<div class="petcard"><div class="big">${owned?p.emoji:'❔'}</div>
+<strong>${owned?p.name:'Неизвестный питомец'}</strong>
+<small>${owned?'Бонус: +'+p.mult+'%':'Ещё не найден'}</small></div>`;
+});
 html+='</div>';
+});
+
 c.innerHTML=html;
 }
 }
@@ -641,10 +708,42 @@ s.owned.push(id);
 alert('🎉 Получен питомец: '+pet.emoji+' '+pet.name);
 }
 
+function findLocationPet(){
+const index=s.currentLocation;
+const group=locationPets[index]||[];
+const available=group.filter(p=>!s.locationPetsOwned.includes(p.id));
+
+if(!available.length){
+alert('🏆 Ты уже собрал всех пяти питомцев этой локации!');
+return;
+}
+
+const ownedCount=group.length-available.length;
+const cost=locationPetCost(index,ownedCount);
+
+if(s.coins<cost){
+alert('Недостаточно монет! Нужно '+fmt(cost)+' монет.');
+return;
+}
+
+s.coins-=cost;
+const pet=available[Math.floor(Math.random()*available.length)];
+s.locationPetsOwned.push(pet.id);
+
+update();
+
+alert(
+'🎉 Новый питомец!\n\n'+
+pet.emoji+' '+pet.name+'\n'+
+'Локация: '+locations[index].name+'\n'+
+'Сила питомца: +'+pet.mult+'%\n\n'+
+'Бонус добавлен к твоему множителю!'
+);
+}
+
 function doRebirth(){
 const cost=5000000;
 
-/* Защита: проверяем все условия до сброса прогресса */
 if(!allWorldsUnlocked()){
 alert('🔒 Для перерождения нужно открыть все 10 миров!');
 return;
@@ -661,7 +760,7 @@ return;
 }
 
 const confirmed=confirm(
-'Переродиться? Весь игровой прогресс, питомцы, миры, боссы, предметы и скины будут сброшены. Открытые локации сохранятся.'
+'Переродиться? Игровой прогресс, обычные питомцы, миры, боссы, предметы и скины будут сброшены. Локации и питомцы локаций сохранятся.'
 );
 if(!confirmed)return;
 
@@ -690,7 +789,6 @@ ownedSkins:[0],
 rebirths:nextRebirths
 });
 
-/* Открываем новую локацию, если достигнут очередной порог */
 const newlyUnlockedLocations=unlockLocationsForRebirths();
 
 activeTab='rebirth';
@@ -707,7 +805,7 @@ newlyUnlockedLocations.map(location=>location.icon+' '+location.name).join(', ')
 
 alert(
 '♻️ Перерождение выполнено!\n\n'+
-'Весь игровой прогресс сброшен.\n'+
+'Весь основной игровой прогресс сброшен.\n'+
 'Количество перерождений: '+s.rebirths+'\n'+
 'Постоянный бонус: +'+(s.rebirths*100)+'%'+
 locationMessage
@@ -769,7 +867,6 @@ s.currentWorld=i;
 
 else if(action==='selectLocation'){
 const i=Number(id);
-
 if(!Number.isInteger(i)||i<0||i>=locations.length)return;
 
 if(!s.unlockedLocations.includes(i)){
@@ -779,6 +876,10 @@ return;
 
 s.currentLocation=i;
 update();
+}
+
+else if(action==='findLocationPet'){
+findLocationPet();
 }
 
 else if(action==='attackBoss'){
@@ -822,7 +923,6 @@ cost=2000;
 pool=['dragon','phoenix','ghost','crown','planet','comet','nebula','blackhole'];
 }
 
-/* Проверяем наличие доступных питомцев до списания монет */
 const pet=getRandomPet(pool);
 
 if(!pet){
@@ -830,9 +930,7 @@ alert('Ты уже собрал всех питомцев из этого пор
 return;
 }
 
-buy(cost,()=>{
-givePet(pet);
-});
+buy(cost,()=>givePet(pet));
 }
 
 else if(action==='equipPet'){
@@ -892,15 +990,14 @@ alert('🎉 Ты выиграл '+fmt(prize)+' монет!');
 }
 
 else if(action==='chest'){
-buy(1500,()=>{
 const available=items.filter(x=>!s.itemsOwned.includes(x.id));
 
 if(!available.length){
 alert('Ты уже собрал все предметы!');
-s.coins+=1500;
 return;
 }
 
+buy(1500,()=>{
 const item=available[Math.floor(Math.random()*available.length)];
 s.itemsOwned.push(item.id);
 alert('🎁 Получен предмет: '+item.icon+' '+item.name);
@@ -942,9 +1039,7 @@ changed=true;
 if(changed)update();
 },1000);
 
-/* При загрузке проверяем, не накоплены ли перерождения для новых локаций */
 unlockLocationsForRebirths();
-
 update();
 </script>
 </body>
